@@ -1,3 +1,6 @@
+Ссылка на макет:
+https://drive.google.com/file/d/1j1yE6Io4-X0KCpRc7H6EvBhLY-0bzmP0/view?usp=sharing
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
