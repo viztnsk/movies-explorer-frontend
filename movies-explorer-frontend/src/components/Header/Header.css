@@ -1,0 +1,127 @@
+.header {
+  max-width: 100%;
+  min-height: 54px;
+  padding: 18px 70px;
+  margin: 0 auto;
+}
+.header_dark {
+  background-color: #5C5C5C;
+}
+.header__logo {
+  width: 38px;
+  height: 38px;
+  background-image: url('../../images/logo.svg');
+  background-repeat: no-repeat;
+  padding-right: 16px;
+}
+.header__logo:hover {
+  opacity: 0.8;
+}
+.header__container {
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header__links {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+.header__link {
+  font-size: 12px;
+  line-height: 16px;
+  color: #000;
+  text-decoration: none;
+  text-align: center;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.header__link:hover {
+  opacity: 0.7;
+}
+.header__link_type_reg {
+  color: #fff;
+}
+.header__link_type_login {
+  width: 76px;
+  height: 32px;
+  box-sizing: border-box;
+  background-color: #2BE080;
+  border-radius: 3px;
+}
+.header__link_type_movies {
+  font-size: 13px;
+  line-height: 18px;
+  padding-left: 29px;
+}
+.header__link_type_saved {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 400;
+}
+.header__profile {
+  color: #000;
+  width: 100px;
+  height: 32px;
+  font-size: 14px;
+  line-height: 16px;
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  border: 2px solid rgb(171, 171, 171, 0.2);
+  border-radius: 50px;
+}
+.header__profile:hover {
+  opacity: 0.7;
+}
+.header__auth {
+  margin: 53px auto 0;
+  max-width: 396px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.header__heading {
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 29px;
+  margin: 0;
+}
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  .header {
+    padding: 18px 30px;
+    min-height: 74px;
+  }
+  .header__auth {
+    margin: 214px auto 0;
+  }
+}
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .header {
+    padding: 18px 14px;
+  }
+  .header__links {
+    gap: 14px;
+  }
+  .header__link {
+    font-size: 10px;
+    line-height: 16px;
+  }
+  .header__auth {
+    align-items: center;
+    margin-top: 39px;
+    gap: 49px;
+  }
+  .header__logo_auth {
+    padding: 0;
+  }
+  .header__link_type_login {
+    width: 54px;
+    height: 26px;
+  }
+}
