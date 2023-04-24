@@ -2,6 +2,7 @@
   margin: 0 auto;
   padding: 0;
   min-width: 320px;
+  max-width: 1440px;
   min-height: 100%;
   box-sizing: border-box;
   background-color: #FFF;
