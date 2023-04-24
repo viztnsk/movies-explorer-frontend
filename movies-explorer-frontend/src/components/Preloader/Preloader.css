@@ -48,7 +48,7 @@
     z-index: 10;
     padding: 20px;
 }
-.preloader__hidden {
+.preloader_hidden {
     display: none;
 }
 .preloader__container {

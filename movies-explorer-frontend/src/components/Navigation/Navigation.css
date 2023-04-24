@@ -7,11 +7,11 @@
 .navigation__logo:hover {
   opacity: 0.8;
 }
-.navigation__container {
+.navigation {
   width: calc(100% - 54px);
   margin-left: 45px;
 }
-.navigation__container_burger {
+.navigation_burger {
   display: none;
   opacity: 0;
   transition: opacity 0.3s ease-in-out 0.1s;
@@ -93,10 +93,10 @@
   display: none;
 }
 @media screen and (max-width: 768px) {
-  .navigation__container {
+  .navigation {
     display: none;
   }
-  .navigation__container_burger {
+  .navigation_burger {
   position: absolute;
   top: 0;
   right: 0;

@@ -13,7 +13,7 @@
   line-height: 27px;
   letter-spacing: -0.04em;
 }
-.project__info {
+.project__period {
   display: flex;
   gap: 53px;
   max-width: 1140px;
@@ -34,7 +34,7 @@
   font-size: 14px;
   line-height: 20px;
 }
-.project__timeline {
+.timeline {
   margin: 96px auto 14px;
   padding: 0 50px;
 }

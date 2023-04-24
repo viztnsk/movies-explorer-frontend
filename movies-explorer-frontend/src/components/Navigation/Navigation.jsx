@@ -9,8 +9,8 @@ function Navigation() {
   const toggleBurger = () => setBurger(!burger);
   return (
     <>
-      <nav className={`navigation__container 
-      ${burger ? 'navigation__container_burger' : ''}
+      <nav className={`navigation 
+      ${burger ? 'navigation_burger' : ''}
       `} style={burger ? {position: 'absolute', top: 0, height: document.body.clientHeight} : {}}>
         <div className='navigation__cover' style={burger ? {position: 'absolute', top: 0, height: document.body.clientHeight} : {}}>
           <div className={`navigation__links 

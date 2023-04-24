@@ -11,11 +11,11 @@ function Profile(props) {
   return (
     <section className="profile">
      <h1 className="profile__heading">Привет, {props.name}!</h1>
-     <form action="" className="profile__form">
-      <label htmlFor="" className="profile__label" >Имя
+     <form className="profile__form">
+      <label className="profile__label" >Имя
         <input type="text" className="profile__input" placeholder={props.name} disabled={isDisabled}/>
       </label>
-      <label htmlFor="" className="profile__label">Email
+      <label className="profile__label">Email
         <input type="text" className="profile__input" disabled={isDisabled} placeholder={props.email}/>
       </label>
       <button className={`profile__edit-button ${edit ? 'profile_hidden' : ''}`} type='button' onClick={onEdit}>Редактировать</button>

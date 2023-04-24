@@ -5,7 +5,7 @@ import Navigation from '../Navigation/Navigation.jsx';
 function Header() {
   const path = useLocation().pathname;  
   return (
-    <header className={`header ${path === '/' ? 'header__dark' : ''}`}>
+    <header className={`header ${path === '/' ? 'header_dark' : ''}`}>
         <Routes>
           <Route exact path='/' element={
             <div className="header__container">
@@ -21,19 +21,19 @@ function Header() {
           }/>
           <Route exact path='/movies' element={
             <div className="header__container">
-              <Link to='/' className='navigation__logo'></Link>
+              <Link to='/' className='header__logo'></Link>
               <Navigation />
             </div>
           }/>
           <Route exact path='/saved-movies' element={
              <div className="header__container">
-             <Link to='/' className='navigation__logo'></Link>
+             <Link to='/' className='header__logo'></Link>
              <Navigation />
            </div>
           }/>
           <Route exact path='/profile' element={
              <div className="header__container">
-             <Link to='/' className='navigation__logo'></Link>
+             <Link to='/' className='header__logo'></Link>
              <Navigation />
            </div>
           }/>
