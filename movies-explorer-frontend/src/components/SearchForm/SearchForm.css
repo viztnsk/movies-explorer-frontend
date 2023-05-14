@@ -1,5 +1,6 @@
 .search {
   margin: 53px 70px 70px; 
+  position: relative;
 }
 .search__form {
   height: 72px;

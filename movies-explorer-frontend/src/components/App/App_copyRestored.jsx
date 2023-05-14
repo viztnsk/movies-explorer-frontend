@@ -26,8 +26,6 @@ function App() {
   const [status, setStatus] = useState(false)
   const [allMovies, setAllMovies] = useState([])
   const [savedMovies, setSavedMovies] = useState([])
-  const [storagedMovies, setStoragedMovies] = useState(JSON.parse(localStorage.getItem('foundMovies')) || null)
-  // const [searchedMovies, setSearchedMovies] = useState(JSON.parse(localStorage.getItem('foundMovies')))
   const [searchedMovies, setSearchedMovies] = useState([])
   const [saved, setSaved] = useState(false)
   const [searchedSavedMovies, setSearchedSavedMovies] = useState([])
@@ -41,8 +39,7 @@ function App() {
   const [checked, setChecked] = useState(false)
   const [isInfoPopupOpened, setInfoPopupOpen] = useState(false)
   const [disabled, setDisabled] = useState(false)
-  const [deleted, setDeleted] = useState(false)
-  
+
 
   useEffect(() => {
     checkToken()
@@ -52,11 +49,36 @@ function App() {
     if (loggedIn) {
     Promise.all([
       mainApi.getUser(),
+      moviesApi.getMovies(),
       mainApi.getMovies()
     ])
-      .then(([user, savedMovies]) => {
+      .then(([user, allMovies, savedMovies]) => {
         setCurrentUser({name: user.name, email: user.email, _id: user._id})
         setSavedMovies(savedMovies)
+        modifyAllMovies(allMovies, savedMovies)
+
+        // allMovies.forEach((movie) => {
+        //   movie._id = null
+        //   savedMovies.forEach((savedMovie) => {
+        //     if (savedMovie.movieId === movie.id) {
+        //       movie._id = savedMovie.movieId
+        //     }
+        //   })
+        //   setAllMovies(allMovies => [...allMovies, movie])
+        //   })
+        // setSavedMovies(savedMovies)
+        // setAllMovies(allMovies)
+        console.log(savedMovies)
+        console.log(allMovies)
+        allMovies.forEach(movie => {
+          if (movie._id === 0) {
+          setSaved(false)
+        } else {
+          setSaved(true)
+        }})
+        allMovies.forEach(movie => console.log(movie._id))
+        allMovies.forEach(movie => console.log(saved))
+        // console.log(currentUser)
       })
       .catch(err => console.log(`Ошибка при загрузке данных с сервера на UseEffect: ${err}`))
     }
@@ -65,7 +87,7 @@ function App() {
   useEffect(() => {
 		if (loggedIn && path === '/saved-movies') {
 			mainApi
-				.getMovies()
+				.getSavedMovies()
 				.then((savedMovies) => {
 					setSavedMovies(savedMovies)
 				})
@@ -75,11 +97,13 @@ function App() {
 		}
 	}, [loggedIn])
 
+  useEffect(() => {
+		setError(false)
+    setMoviesError(false)
+	}, [path])
   // useEffect(() => {
   //   modifyAllMovies(allMovies, savedMovies)
   // }, [savedMovies])
-
-  // у фильмов остается закрашенный значок даже после удаления их из сохраненных
 
   const modifyAllMovies = (movies, savedMovies) => {
     setAllMovies(movies.map((movie) => {
@@ -89,6 +113,8 @@ function App() {
           movie._id = savedMovie._id
         }
       })
+      console.log(movie._id)
+      console.log(typeof movie._id)
       if (movie._id === 0) {
         setSaved(false)
       } else {
@@ -114,7 +140,7 @@ function App() {
           setLoggedIn(false)
           setCurrentUser(null)
           mainApi.removeToken()
-          return Promise.reject(err.message)
+          return Promise.reject(err)
         })
     }
     if(!token) {
@@ -151,7 +177,7 @@ function App() {
       setErrorMessage('')
     })
     .catch((err) => {
-      console.log(`Произошла ошибка при обновлении данных пользователя: ${err.message}`)
+      console.log(`Произошла ошибка при обновлении данных пользователя: ${err}`)
       setError(true)
       setErrorMessage(err.message)
       setSuccess(false)
@@ -181,7 +207,7 @@ function App() {
       console.log(savedMovies)
       setSaved(!saved)
   })
-    .catch((err) => console.log(`Что-то пошло не так: ${err.message}`))
+    .catch((err) => console.log(`Что-то пошло не так: ${err}`))
   }
   function onDelete(movie) {
     const deletedMovie = savedMovies.find((item) => item._id === movie._id)
@@ -198,7 +224,7 @@ function App() {
       .then(() => {
         setSaved(!saved)
       })
-      .catch(err => console.log(`Что-то пошло не так: ${err.message}`))
+      .catch(err => console.log(`Что-то пошло не так: ${err}`))
     }
     console.log(savedMovies)
     console.log(movie)
@@ -206,9 +232,8 @@ function App() {
   }
 
   const handleSearchFilter = (items, query) => {
-    console.log(query)
     return items.filter((item) => {
-      return item.nameRU.toLowerCase().includes(query.toLowerCase())
+      return item.nameRU.toLowerCase().includes(query)
     })
 }
   function handleCheckboxFilter(items, checkboxState) {
@@ -216,21 +241,7 @@ function App() {
     ? items
     : items.filter((item) => item.duration <= 40)
   }
-  function handleUpdateStoragedMovies () {
-
-  }
  
-  // useEffect(() => {
-  //   setSearchedMovies(searchedMovies.map((movie) => {
-  //     savedMovies.forEach((savedMovie) => {
-  //       if (savedMovie.movieId === movie.id) {
-  //         movie._id = savedMovie._id
-  //       }
-  //     })
-  //     return movie
-  //   }))
-  // }, [savedMovies])
-
   function onMoviesSearch(query) {
     setMoviesError(false)
     setIsLoading(true)
@@ -238,38 +249,38 @@ function App() {
     localStorage.setItem('checkboxState', checked)
     moviesApi.getMovies()
     .then((movies) => {
+      // console.log(movies)
       modifyAllMovies(movies, savedMovies)
-      const movieQuery = localStorage.getItem('movieQuery')
-      const foundMovies = handleSearchFilter(allMovies, movieQuery)
-      console.log(foundMovies)
+    })
+    .then(() => {
+      const movieQuery = localStorage.getItem('movieQuery').toLowerCase()
+      const searchedMovies = handleSearchFilter(allMovies, movieQuery)
+      setSearchedMovies(searchedMovies)
       const checkboxState = JSON.parse(localStorage.getItem('checkboxState'))
-      const checkedShortMovies = handleCheckboxFilter(foundMovies, checkboxState)
+      const checkedShortMovies = handleCheckboxFilter(searchedMovies, checkboxState)
       if (checkedShortMovies.length === 0) {
         setNotFound(true)
       } else {
         setNotFound(false)
         setMoviesError(false)
         localStorage.setItem('foundMovies', JSON.stringify(checkedShortMovies))
-        setStoragedMovies(foundMovies)
       }
       setIsLoading(false)
       setMoviesError(false)
       })
       .then(() => {
         console.log(JSON.parse(localStorage.getItem('foundMovies')))
-        console.log(storagedMovies)
       })
       .catch((err) => {
         localStorage.removeItem('foundMovies')
         setMoviesError(true)
         setIsLoading(false)
-        console.log(err.message)
       })
   }
   function handleCheckboxChange() {
     setChecked(!checked)
     localStorage.setItem('checkboxState', !checked)
-    const checkedShortMovies = handleCheckboxFilter(storagedMovies, !checked)
+    const checkedShortMovies = handleCheckboxFilter(searchedMovies, !checked)
     localStorage.setItem('foundMovies', JSON.stringify(checkedShortMovies))
       if ((checkedShortMovies.length === 0) || 
         (!localStorage.getItem('foundMovies'))) {
@@ -283,13 +294,13 @@ function App() {
       setMoviesError(false)
   }
   function handleSavedCheckboxChange() {
-    setChecked(!checked)
+
   }
 
 
 
   function onSavedMoviesSearch(query) {
-    const searchedSavedMovies = handleSearchFilter(savedMovies, query.movieInput)
+    const searchedSavedMovies = handleSearchFilter(savedMovies, query)
     const checkedShortSavedMovies = handleCheckboxFilter(searchedSavedMovies, checked)
     if (checkedShortSavedMovies.length === 0) {
       setNotFound(true)
@@ -298,8 +309,6 @@ function App() {
       setMoviesError(false)
       setSearchedSavedMovies(checkedShortSavedMovies)
     }
-    console.log(searchedSavedMovies)
-    return searchedSavedMovies
   }
   function handleInfoPopup() {setInfoPopupOpen(!isInfoPopupOpened)}
 
@@ -343,14 +352,11 @@ function App() {
           checked={checked}
           onDelete={onDelete}
           savedMovies={savedMovies}
-          setSavedMovies={setSavedMovies}
           setChecked={setChecked}
           handleCheckboxChange={handleSavedCheckboxChange}
           moviesError={moviesError}
           saved={saved}
           onSave={onSave}
-          handleCheckboxFilter={handleCheckboxFilter}
-          setNotFound={setNotFound}
           />
         }/>
 
@@ -366,7 +372,7 @@ function App() {
           error={error}
           setError={setError}
           setChecked={setChecked}
-          setStoragedMovies={setStoragedMovies}
+          setSearchedMovies={setSearchedMovies}
           />
       }/>
       <Route exact path='/signin' element={

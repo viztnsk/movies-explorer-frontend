@@ -1,28 +1,102 @@
-import { Link } from "react-router-dom";
+import { useForm, FormProvider } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import * as auth from '../../utils/Auth';
+import { FormInput } from "../FormInput/FormInput";
+import {
+  name_validation,
+  email_validation,
+  password_validation,
+} from '../../utils/formValidation/inputValidations'
+import useControlledInputs from "../../hooks/useForm";
+import AuthHeader from "../AuthHeader/AuthHeader";
+import { mainApi } from "../../utils/MainApi";
 
-function Register() {
+
+function Register(props) { 
+  const navigate = useNavigate()
+  const { values, handleChange } = useControlledInputs({
+    name: '',
+    email: '',
+    password: ''
+  });
+
+  const methods = useForm(
+    { mode: "onChange" }
+    );
+
+  function handleSignIn(values) {
+    return auth.authorize(values.email, values.password)
+    .then((res) => {
+      mainApi.setToken(res.token)
+      props.checkToken()
+    })
+    .then(() => {
+      props.setStatus(true)
+      props.handleInfoPopup()
+    })
+    .catch((err) => {
+      console.log(err)
+      props.setStatus(false)
+      props.handleInfoPopup()
+    })
+  }
+
+  const onSubmit = methods.handleSubmit((values) => {
+     const { name, email, password } = values
+     auth.register(name, email, password)
+    .then((res) => {
+      if (res) {
+        props.setStatus(true)
+        props.handleInfoPopup()
+      }})
+      .then(() => {
+        handleSignIn(values)
+    })
+  })
+
   return (
+    <>
+    <AuthHeader></AuthHeader>
     <section className="auth">
-     <form className="auth__form">
-      <label className="auth__label">Имя
-        <input type="text" id='name-input' className="auth__input" placeholder="Иван" required minLength={2} maxLength={30}/>
-        <span className="auth__error">Что-то пошло не так...</span>
-      </label>
-      <label className="auth__label">E-mail
-        <input type="email" id="email-input" className="auth__input" placeholder="pochta@yandex.ru" required/>
-        <span className="auth__error">Что-то пошло не так...</span>
-      </label>
-      <label className="auth__label">Пароль
-        <input type="password" id='password-input' className="auth__input" placeholder="От 8 знаков" required minLength={8}/>
-        <span className="auth__error auth__error_shown">Что-то пошло не так...</span>
-      </label>
-      <button className="auth__button" type="submit">Зарегистрироваться</button>
-      <div className="auth__info auth__info_type_reg">
-        <p className="auth__text">Уже зарегистрированы?</p>
-        <Link to={'/signin'} className='auth__link'>Войти</Link>
-      </div>
-     </form>
+    <FormProvider {...methods}>
+     <form 
+      onSubmit={onSubmit}
+      className="auth__form" 
+      noValidate
+      >
+        <FormInput 
+          onChange={handleChange}
+          {...name_validation}
+          labelClassName={"auth__label"}
+          inputClassName={"auth__input"}
+          errorClassName={"auth__error"}/>
+        <FormInput 
+          onChange={handleChange} 
+          {...email_validation}
+          labelClassName={"auth__label"}
+          inputClassName={"auth__input"}
+          errorClassName={"auth__error"}/>
+        <FormInput 
+        onChange={handleChange} 
+        {...password_validation} 
+        labelClassName={"auth__label"} 
+        inputClassName={"auth__input"} 
+        errorClassName={"auth__error"}/>
+        <button 
+          className="auth__button" 
+          type="submit" 
+          disabled={!methods.formState.isValid}
+          onClick={methods.handleSubmit(onSubmit)}
+          >Зарегистрироваться
+        </button>
+        <div className="auth__info auth__info_type_reg">
+          <p className="auth__text">Уже зарегистрированы?</p>
+          <Link to={'/signin'} className='auth__link'>Войти</Link>
+        </div>
+      </form>
+     </FormProvider>
     </section>
+    </>
   )
 }
 

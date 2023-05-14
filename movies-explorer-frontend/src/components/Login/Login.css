@@ -69,6 +69,9 @@
   opacity: 0.8;
   cursor: pointer;
 }
+.auth__button:disabled {
+  opacity: 0.5;
+}
 .auth__info {
   padding-bottom: 70px;
   display: flex;

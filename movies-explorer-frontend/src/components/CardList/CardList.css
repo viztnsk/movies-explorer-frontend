@@ -26,10 +26,6 @@
 .cards__load-button:hover {
   opacity: 0.8;
 }
-.cards__load-button_hidden {
-  visibility: hidden;
-  height: 107px;
-}
 @media screen and (min-width: 768px) and (max-width: 1160px) {
   .cards {
     margin: 0 30px;

@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
@@ -16,7 +16,8 @@ function Profile({ name, email, ...props }) {
   const [edit, setEdit] = useState(false)
   const [isInputDisabled, setInputDisabled] = useState(true);
 
-  const { values, handleChange } = useControlledInputs({
+  const [ values, setValues//handleChange
+   ] = useState({//useControlledInputs({
     name: currentUser.name || '',
     email: currentUser.email || ''
   })
@@ -27,11 +28,29 @@ function Profile({ name, email, ...props }) {
   }
   const errorMessage = 'При обновлении профиля произошла ошибка.'
 
-  const methods = useForm(
-    { mode: 'onBlur' }
-    )
+  const handleChange = (event) => {
+		const { name, value } = event.target;
+		setValues((prevValue) => ({
+			...prevValue,
+			[name]: value,
+		}));
+	};
 
+  const methods = useForm(
+    { mode: 'onChange' }
+    )
   const formValues = methods.getValues()
+
+    // useEffect(() => {
+    //   //if ()
+
+    //   console.log(methods.formState.isValid)
+    //   console.log(formValues)
+    //   console.log(methods.formState.errors)
+    //   console.log(updatedFormValues)
+    //   console.log(!((updatedFormValues.name !== currentUser.name) || (updatedFormValues.email !== currentUser.email)))
+    // }, [formValues.name, formValues.email])
+
 
   const updatedFormValues = {
     name: formValues.name === undefined ? values.name : formValues.name ,
@@ -39,16 +58,20 @@ function Profile({ name, email, ...props }) {
   }
 
   const onSubmit = () => {
-    const {name, email} = updatedFormValues;
-    if (!name || !email) return;
-    props.updateUser(updatedFormValues)
+    const {name, email} = values;
+  if (name !== currentUser.name || email !== currentUser.email) {
+    props.updateUser(values)
     onEdit()    
+  } else return 
 }
 
   function signOut() {
-    localStorage.clear()
+    localStorage.removeItem('token')
+    localStorage.removeItem('movieQuery')
+    localStorage.removeItem('foundMovies')
+    localStorage.removeItem('checkboxState')
     props.setChecked(false)
-    props.setStoragedMovies([])
+    props.setSearchedMovies([])
     navigate('/signin', {replace: true})
     props.setLoggedIn(false)
   } 
@@ -69,6 +92,7 @@ function Profile({ name, email, ...props }) {
         // errorClassName={"profile__input-error"} 
         disabled={isInputDisabled}
         defaultValue={values.name}
+        //value={values.name}
         />
       <FormInput 
         onChange={handleChange} 
@@ -78,18 +102,26 @@ function Profile({ name, email, ...props }) {
         // errorClassName={"profile__input-error"} 
         disabled={isInputDisabled}
         defaultValue={values.email}
+        //value={values.email}
         />
+        <div className={`profile__edit ${edit ? 'profile_shown' : ''}`}>
+          {props.error && <span className='profile__error'>{errorMessage}</span>}
+          <button type='submit' className={`profile__save-button`} onClick={methods.handleSubmit(onSubmit)} disabled={!methods.formState.isValid}>
+            {props.success ? 'Данные обновлены' : 'Сохранить'}
+          </button>
+        </div>
       <button className={`profile__edit-button ${edit ? 'profile_hidden' : ''}`} type='button' onClick={onEdit}>Редактировать</button>
+      <button type='button' to="/" onClick={signOut} className={`profile__exit ${edit ? 'profile_hidden' : ''}`}>Выйти из аккаунта</button>
      </form>
      </FormProvider>
-     <button type='button' to="/" onClick={signOut} className={`profile__exit ${edit ? 'profile_hidden' : ''}`}>Выйти из аккаунта</button>
+     {/* <button type='button' to="/" onClick={signOut} className={`profile__exit ${edit ? 'profile_hidden' : ''}`}>Выйти из аккаунта</button>
      <div className={`profile__edit ${edit ? 'profile_shown' : ''}`}>
       {props.error && <span className='profile__error'
       >{errorMessage}
       </span>}
       <button type='submit' className={`profile__save-button`} onClick={methods.handleSubmit(onSubmit)} disabled={!methods.formState.isValid}
       >{props.success ? 'Данные обновлены' : 'Сохранить'}</button>
-      </div>
+      </div> */}
     </section>
     </>
   )

@@ -1,24 +1,53 @@
+import { useForm, FormProvider } from "react-hook-form";
 import { Link } from "react-router-dom";
+import useControlledInputs from "../../hooks/useForm";
+import { FormInput } from "../FormInput/FormInput";
+import {
+  email_validation,
+  password_validation,
+} from '../../utils/formValidation/inputValidations'
+import AuthHeader from "../AuthHeader/AuthHeader";
+function Login(props) {
+  const { values,  handleChange, } = useControlledInputs({
+      email: '',
+      password: ''
+    })
 
-function Login() {
+  const methods = useForm(
+    { mode: "onChange" }
+  );  
+  const onSubmit = methods.handleSubmit((values) => {
+    props.onLogin(values)
+  })
+
   return (
+    <>
+    <AuthHeader></AuthHeader>
     <section className="auth">
-     <form className="auth__form">
-     <label className="auth__label">E-mail
-        <input type="text" id="email-input" className="auth__input" placeholder="pochta@yandex.ru" required/>
-        <span className='auth__error'>Обязательное поле</span>
-      </label>
-      <label className="auth__label">Пароль
-        <input type="password" id='password-input' className="auth__input" placeholder="Ваш пароль" required/>
-        <span className="auth__error">Обязательное поле</span>
-      </label>
-      <button className="auth__button" type="submit">Войти</button>
+      <FormProvider {...methods}>
+     <form 
+      onSubmit={onSubmit}
+        className="auth__form" 
+        noValidate>
+        <FormInput onChange={handleChange} 
+        {...email_validation} labelClassName={"auth__label"} inputClassName={"auth__input"} errorClassName={"auth__error"}/>
+        <FormInput onChange={handleChange} 
+        {...password_validation} labelClassName={"auth__label"} inputClassName={"auth__input"} errorClassName={"auth__error"}/>
+        <button 
+          className="auth__button" 
+          type="submit" 
+        disabled={!methods.formState.isValid}
+        onClick={onSubmit}
+          >Войти
+        </button>
       <div className="auth__info">
         <p className="auth__text">Ещё не зарегистрированы?</p>
         <Link to={'/signup'} className='auth__link'>Регистрация</Link>
       </div>
      </form>
+     </FormProvider>
     </section>
+    </>
   )
 }
 

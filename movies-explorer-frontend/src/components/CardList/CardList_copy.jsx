@@ -28,7 +28,6 @@ function CardList(props) {
     }
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);
-
   }, []);
 
   useEffect(() => {
@@ -48,7 +47,35 @@ function CardList(props) {
   return (
     <section className="cards">
       <div className="cards__list">
-        {(path === '/movies' && props.movies && !props.isLoading) ?
+        {props.shortMovies ?
+        ((path === '/movies' && props.movies && !props.isLoading) ?
+        props.shortMovies.slice(0, cardCount)
+        .map
+        (movie =>
+          (
+          <Card 
+          key={movie.id}
+          _id={movie._id}
+          movie={movie}
+          img={movie.image}
+          title={movie.nameRU}
+          duration={movie.duration}
+          link={movie.trailerLink}
+          country={movie.country}
+          director={movie.director}
+          year={movie.year}
+          owner={movie.owner}
+          description={movie.description}
+          thumbnail={movie.thumbnail}
+          nameEN={movie.nameEn}
+          onSave={props.onSave} 
+          onDelete={props.onDelete}
+          saved={props.saved}
+          disabled={props.disabled}
+          savedMovies={props.savedMovies}
+          />
+        )) : null)
+        : ((path === '/movies' && props.movies && !props.isLoading) ?
         props.movies.slice(0, cardCount)
         .map
         (movie =>
@@ -74,7 +101,8 @@ function CardList(props) {
           disabled={props.disabled}
           savedMovies={props.savedMovies}
           />
-        )) : null}
+        )) : null)
+        }
         {(path === '/saved-movies' && props.savedMovies) ?
         props.savedMovies
         .map
@@ -94,7 +122,7 @@ function CardList(props) {
         )): null
         }
       </div>
-      {props.movies?.length > cardCount && <button className={`cards__load-button`} type='button' onClick={handleMoreData}>Ещё</button>}
+      {(props.movies?.length && props.shortMovies?.length) > cardCount && !props.saved && <button className={`cards__load-button`} type='button' onClick={handleMoreData}>Ещё</button>}
     </section>
   )
 }

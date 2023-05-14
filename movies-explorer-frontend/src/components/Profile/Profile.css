@@ -34,6 +34,8 @@
   border: none;
   text-align: right;
   padding: 0;
+  width: 410px;
+  background-color: transparent;
 }
 .profile__input:disabled {
   color: #000;
@@ -43,8 +45,13 @@
   border-bottom: 1px solid #2BE080;
   padding-bottom: 16px;
 }
-.profile__input::placeholder {
-  color: #000;
+.profile__input-error {
+  font-size: 10px;
+  line-height: 12px;
+  color: #EE3465;
+  position: absolute;
+  left: 50px;
+  top: 0;
 }
 .profile__edit-button {
   margin-top: 204px;
@@ -66,6 +73,9 @@
   text-align: center;
   text-decoration: none;
   color: #EE3465;
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
 }
 .profile__exit:hover {
   opacity: 0.7;
@@ -108,7 +118,10 @@
   position: absolute;
   top: -25px;
   left: 85px;
-  display: none;
+  /* display: none; */
+}
+.profile__error_shown {
+  display: block;
 }
 @media screen and (min-width: 768px) and (max-width: 1023px) {
   .profile__heading {
