@@ -1,5 +1,5 @@
 import { useForm, FormProvider } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import * as auth from '../../utils/Auth';
 import { FormInput } from "../FormInput/FormInput";
 import {
@@ -7,13 +7,11 @@ import {
   email_validation,
   password_validation,
 } from '../../utils/formValidation/inputValidations'
-import useControlledInputs from "../../hooks/useForm";
+import useControlledInputs from "../../hooks/useControlledInputs";
 import AuthHeader from "../AuthHeader/AuthHeader";
 import { mainApi } from "../../utils/MainApi";
 
-
 function Register(props) { 
-  const navigate = useNavigate()
   const { values, handleChange } = useControlledInputs({
     name: '',
     email: '',
@@ -30,15 +28,6 @@ function Register(props) {
       mainApi.setToken(res.token)
       props.checkToken()
     })
-    .then(() => {
-      props.setStatus(true)
-      props.handleInfoPopup()
-    })
-    .catch((err) => {
-      console.log(err)
-      props.setStatus(false)
-      props.handleInfoPopup()
-    })
   }
 
   const onSubmit = methods.handleSubmit((values) => {
@@ -51,6 +40,11 @@ function Register(props) {
       }})
       .then(() => {
         handleSignIn(values)
+    })
+    .catch((err) => {
+      console.log(err)
+      props.setStatus(false)
+      props.handleInfoPopup()
     })
   })
 
@@ -86,8 +80,8 @@ function Register(props) {
           className="auth__button" 
           type="submit" 
           disabled={!methods.formState.isValid}
-          onClick={methods.handleSubmit(onSubmit)}
-          >Зарегистрироваться
+          onClick={methods.handleSubmit(onSubmit)}>
+            Зарегистрироваться
         </button>
         <div className="auth__info auth__info_type_reg">
           <p className="auth__text">Уже зарегистрированы?</p>

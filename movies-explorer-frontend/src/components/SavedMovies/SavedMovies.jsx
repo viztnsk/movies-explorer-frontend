@@ -66,7 +66,11 @@ function SavedMovies(props) {
     <>
     <Header loggedIn={props.loggedIn}/>
     <main className='movies'>
-    <SearchForm onSearch={onSearch} setChecked={setChecked} checked={checked} handleCheckboxChange={handleCheckboxChange}/>
+    <SearchForm 
+      onSearch={onSearch} 
+      setChecked={setChecked} 
+      checked={checked} 
+      handleCheckboxChange={handleCheckboxChange}/>
     {notFound
       ? <div className='movies__error'>Ничего не найдено</div>
       : <CardList 

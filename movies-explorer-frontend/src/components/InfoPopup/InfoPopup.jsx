@@ -1,4 +1,3 @@
-import React from 'react';
 function InfoPopup(props) {
   return(
      <section className={`popup popup_type_auth`+ (props.isOpen ? " popup_opened" : "")}>

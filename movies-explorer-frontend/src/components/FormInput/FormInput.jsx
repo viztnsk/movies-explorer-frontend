@@ -34,12 +34,12 @@ export const FormInput = ({
           disabled={disabled}
           {...methods.register(name, validation)}
         />
-        {isInvalid && errorClassName && defaultValue !== '' &&(<FormInputError 
+        {isInvalid && errorClassName && defaultValue !== '' && 
+        (<FormInputError 
         className={errorClassName}
           isInvalid={isInvalid}
           message={inputError?.error?.message}
-          key={inputError?.error?.message}
-          />)}
+          key={inputError?.error?.message}/>)}
       </label>
   )
 }

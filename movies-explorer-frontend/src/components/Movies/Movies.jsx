@@ -6,7 +6,6 @@ import SearchForm from '../SearchForm/SearchForm';
 
 function Movies(props) {
   const searchedMovies = JSON.parse(localStorage.getItem('foundMovies'))
-  
   return (
     <>
     <Header loggedIn={props.loggedIn}/>
@@ -23,7 +22,6 @@ function Movies(props) {
       : <CardList 
           isLoading={props.isLoading} 
           movies={searchedMovies} 
-          //shortMovies={props.checkedShortMovies}
           saved={props.saved}
           setSaved={props.setSaved}
           savedMovies={props.savedMovies} 

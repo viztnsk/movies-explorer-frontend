@@ -13,16 +13,21 @@ function SearchForm(props) {
   const methods = useForm({
     mode: 'onBlur'
   }); 
+
   const handleSubmit = (query) => {
     props.onSearch(query)
   }
+
   const validation = (path === '/movies' ? {
     required: 'Нужно ввести ключевое слово',
   } : {})
 
   return (
     <section className="search">
-      <form  onSubmit={methods.handleSubmit(handleSubmit)} className='search__form' name='movie'>
+      <form
+        onSubmit={methods.handleSubmit(handleSubmit)} 
+        className='search__form' 
+        name='movie'>
         <input 
           className='search__input' 
           type="text" 
@@ -35,8 +40,7 @@ function SearchForm(props) {
           onChange={e => setQuery(e.target.value)}
           {...methods.register("movieInput", validation)} 
         />
-        <button className="search__button" type='submit' 
-        ></button>
+        <button className="search__button" type='submit'/>
         <FilterCheckbox 
           handleCheckboxChange={props.handleCheckboxChange}
           onSearch={props.onSearch} 

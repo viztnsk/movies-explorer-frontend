@@ -55,6 +55,7 @@ function CardList(props) {
           <Card 
             key={movie.id}
             _id={movie._id}
+            isSaved={movie.isSaved}
             movie={movie}
             img={movie.image}
             title={movie.nameRU}

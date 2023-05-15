@@ -22,10 +22,7 @@ function Card(props) {
   const [shown, setShown] = useState(false);
   const showDelete = () => setShown(true);
   const hideDelete = () => setShown(false);
-  const [saved, setSaved] = useState(props._id)
-  // const isSaved = props.savedMovies.some(
-	// 	(savedMovie) => savedMovie._id === props._id
-	// );
+  const [saved, setSaved] = useState(props.isSaved)
   const checkIsSaved = () => {
     return props.savedMovies.some((savedMovie) => savedMovie._id === props._id)
   }
@@ -36,11 +33,7 @@ function Card(props) {
     }
   }, [])
 
-
-
   function handleSaveMovie() {
-    console.log(props.saved)
-    const { image, nameRU, duration, trailerLink, country, director, year, owner, description, thumbnail, nameEN, movieId } = movie
     if (saved) {
       movie._id = props._id
       props.onDelete(movie)
@@ -51,7 +44,6 @@ function Card(props) {
     }
 
     function handleDeleteMovie() {
-      const { image, nameRU, duration, trailerLink, country, director, year, owner, description, thumbnail, nameEN } = movie
       movie._id = props._id
       props.onDelete(movie)
     }
@@ -67,7 +59,8 @@ function Card(props) {
   return (
     <article className="card">
       <button className="card__button">
-        <Link to={props.link} target="_blank"><img className='card__image' src={ path === '/saved-movies' ? `${props.img}` : `${BASE_MOVIES_API_URL}/${props.img.url}`}
+        <Link to={props.link} target="_blank">
+          <img className='card__image' src={ path === '/saved-movies' ? `${props.img}` : `${BASE_MOVIES_API_URL}/${props.img.url}`}
         alt="Заставка фильма"/></Link>
       </button>
       <div className="card__container" onMouseEnter={showDelete} onMouseLeave={hideDelete}>
