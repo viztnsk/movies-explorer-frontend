@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { mainApi } from '../../utils/MainApi';
 import { moviesApi } from '../../utils/MoviesApi';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
@@ -15,6 +15,7 @@ import SavedMovies from '../SavedMovies/SavedMovies';
 import Main from '../Main/Main';
 
 function App() {
+  const location = useLocation()
   const navigate = useNavigate()
   const [currentUser, setCurrentUser] = useState({
     name: '',
@@ -86,7 +87,8 @@ function App() {
       auth.getContent(token)
       .then((res) => {
         handleLogin(res)
-        navigate('/movies', {replace: true})
+        navigate(-1)
+        //navigate('/movies', {replace: true})
       })
       .catch((err) => {
           setLoggedIn(false)
@@ -101,6 +103,7 @@ function App() {
   }
 
   function handleSignIn(values) {
+    sessionStorage.setItem('beforeLogin', location.state?.from?.pathname);
     return auth.authorize(values.email, values.password)
     .then((res) => {
       mainApi.setToken(res.token)

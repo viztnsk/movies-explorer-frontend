@@ -7,7 +7,7 @@ import {
   email_validation,
   password_validation,
 } from '../../utils/formValidation/inputValidations'
-import useControlledInputs from "../../hooks/useControlledInputs";
+import useControlledInputs from "../../hooks/useForm";
 import AuthHeader from "../AuthHeader/AuthHeader";
 import { mainApi } from "../../utils/MainApi";
 

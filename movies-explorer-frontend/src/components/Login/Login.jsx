@@ -1,6 +1,6 @@
 import { useForm, FormProvider } from "react-hook-form";
 import { Link } from "react-router-dom";
-import useControlledInputs from "../../hooks/useControlledInputs";
+import useControlledInputs from "../../hooks/useForm";
 import { FormInput } from "../FormInput/FormInput";
 import {
   email_validation,

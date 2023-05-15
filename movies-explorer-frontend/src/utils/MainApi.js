@@ -3,7 +3,7 @@ import { BASE_API_URL } from "./constants";
 class MainApi extends Api{
   constructor() {
     super({
-      baseUrl: 'http://localhost:3000',//`${BASE_API_URL}`,
+      baseUrl: `${BASE_API_URL}`,
       headers: {
         'Content-Type': 'application/json',
       }

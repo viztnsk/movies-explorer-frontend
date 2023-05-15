@@ -7,7 +7,7 @@ function getResponseData(res) {
 }
 
 export const register = (name, email, password) => {
-  return fetch('http://localhost:3000/signup',//`${BASE_API_URL}/signup`, 
+  return fetch(`${BASE_API_URL}/signup`, 
   {
     method: 'POST',
     headers: {
@@ -19,7 +19,7 @@ export const register = (name, email, password) => {
   .then((res) => { return res }) //name, email, _id
 }
 export const authorize = (email, password) => {
-  return fetch('http://localhost:3000/signin',//${BASE_API_URL}/signin`, 
+  return fetch(`${BASE_API_URL}/signin`, 
   {
     method: 'POST',
     headers: {
@@ -40,7 +40,7 @@ export const authorize = (email, password) => {
 }
 
 export const getContent = (token) => {
-  return fetch('http://localhost:3000/users/me', //`${BASE_API_URL}/users/me`
+  return fetch(`${BASE_API_URL}/users/me`,
   {
   method: 'GET', 
   headers: {
