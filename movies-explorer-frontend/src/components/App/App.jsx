@@ -73,7 +73,7 @@ function App() {
       return movie
     }))
     setAllMovies(updatedMovies)
-    return allMovies
+    return updatedMovies
   }
 
   const handleLogin = (res) => {
@@ -103,7 +103,6 @@ function App() {
   }
 
   function handleSignIn(values) {
-    sessionStorage.setItem('beforeLogin', location.state?.from?.pathname);
     return auth.authorize(values.email, values.password)
     .then((res) => {
       mainApi.setToken(res.token)
@@ -201,17 +200,11 @@ function App() {
     localStorage.setItem('checkboxState', checked)
     moviesApi.getMovies()
     .then((movies) => {
-      modifyAllMovies(movies, savedMovies)
-      })
-    .then(() => {
-      //allMovies не приходят сюда в обновленном виде
-      console.log(allMovies)
-      console.log(savedMovies)
+      const modifiedMovies = modifyAllMovies(movies, savedMovies)
       const movieQuery = localStorage.getItem('movieQuery')
-      const foundMovies = handleSearchFilter(allMovies, movieQuery)
-      console.log({foundMovies, allMovies, movieQuery})
+      const foundMovies = handleSearchFilter(modifiedMovies, movieQuery)
       const checkboxState = JSON.parse(localStorage.getItem('checkboxState'))
-      const checkedShortMovies = handleCheckboxFilter(foundMovies,  checkboxState)
+      const checkedShortMovies = handleCheckboxFilter(foundMovies, checkboxState)
       if (checkedShortMovies.length === 0) {
         setNotFound(true)
       } else {
@@ -222,10 +215,6 @@ function App() {
       }
       setIsLoading(false)
       setMoviesError(false)
-      })
-      .then(() => {
-        console.log(JSON.parse(localStorage.getItem('foundMovies')))
-        console.log(storagedMovies)
       })
       .catch((err) => {
         localStorage.removeItem('foundMovies')
