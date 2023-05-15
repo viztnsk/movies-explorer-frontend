@@ -1,0 +1,147 @@
+.auth {
+  width: 396px;
+  margin: 23px auto 0; 
+}
+.auth__form {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.auth__label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 12px;
+  color: #A0A0A0;
+  margin-bottom: 24px;
+  position: relative;
+}
+.auth__input {
+  padding: 5px 0 10px;
+  border: none;
+  box-shadow: none;
+  border-bottom: 1px solid #E8E8E8;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+}
+.auth__input:invalid {
+  color: #EE3465;
+}
+.auth__input:focus {
+  outline: none;
+  border-bottom: 1px solid #2BE080;
+}
+.auth__input::placeholder {
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: 400;
+}
+.auth__error {
+  padding-top: 6px;
+  font-size: 10px;
+  line-height: 12px;
+  color: #EE3465;
+  position: absolute;
+  left: 0;
+  top: 45px;
+  display: none;
+}
+.auth__error_shown {
+  display: block;
+}
+.auth__button {
+  width: 396px;
+  height: 45px;
+  background: #2BE080;
+  border-radius: 3px;
+  border: none;
+  color: white;
+  text-align: center;
+  padding: 0;
+  position: absolute;
+  top: 334px;
+  left: 0;
+  font-size: 14px;
+  line-height: 17px;
+}
+.auth__button:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+.auth__button:disabled {
+  opacity: 0.5;
+}
+.auth__info {
+  padding-bottom: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  position: absolute;
+  top: 396px;
+  left: 56px;
+}
+.auth__info_type_reg {
+  left: 89px;
+}
+.auth__text {
+  margin: 0;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  text-align: center;
+  color: #A0A0A0;
+}
+.auth__link {
+  font-size: 14px;
+  line-height: 17px;
+  text-align: center;
+  color: #2BE080;
+  text-decoration: none;
+}
+.auth__link:hover {
+  opacity: 0.7;
+  cursor: pointer;
+}
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  .auth__button {
+   top: 333px;
+  }
+  .auth__info {
+    left: 56px;
+    padding-bottom: 232px;
+  }
+  .auth__info_type_reg {
+    left: 90px;
+  }
+}
+@media screen and (min-width: 320px) and (max-width: 767px) {
+  .auth {
+    width: 260px;
+    margin: 63px auto 0;
+  }
+  .auth__button {
+    width: 260px;
+    font-size: 12px;
+    line-height: 15px;
+    top: 422px;
+  }
+  .auth__info {
+    padding-bottom: 30px;
+    left: 7px;
+    top: 482px;
+    gap: 8px;
+  }
+  .auth__info_type_reg {
+    left: 36px;
+  }
+  .auth__text {
+    font-size: 12px;
+    line-height: 15px;
+  }
+  .auth__link {
+    font-size: 12px;
+    line-height: 15px;
+  }
+}
