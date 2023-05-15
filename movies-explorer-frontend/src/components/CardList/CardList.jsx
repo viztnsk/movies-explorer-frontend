@@ -28,7 +28,6 @@ function CardList(props) {
     }
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);
-
   }, []);
 
   useEffect(() => {
@@ -54,25 +53,25 @@ function CardList(props) {
         (movie =>
           (
           <Card 
-          key={movie.id}
-          _id={movie._id}
-          movie={movie}
-          img={movie.image}
-          title={movie.nameRU}
-          duration={movie.duration}
-          link={movie.trailerLink}
-          country={movie.country}
-          director={movie.director}
-          year={movie.year}
-          owner={movie.owner}
-          description={movie.description}
-          thumbnail={movie.thumbnail}
-          nameEN={movie.nameEn}
-          onSave={props.onSave} 
-          onDelete={props.onDelete}
-          saved={props.saved}
-          disabled={props.disabled}
-          savedMovies={props.savedMovies}
+            key={movie.id}
+            _id={movie._id}
+            movie={movie}
+            img={movie.image}
+            title={movie.nameRU}
+            duration={movie.duration}
+            link={movie.trailerLink}
+            country={movie.country}
+            director={movie.director}
+            year={movie.year}
+            owner={movie.owner}
+            description={movie.description}
+            thumbnail={movie.thumbnail}
+            nameEN={movie.nameEn}
+            onSave={props.onSave} 
+            onDelete={props.onDelete}
+            saved={props.saved}
+            disabled={props.disabled}
+            savedMovies={props.savedMovies}
           />
         )) : null}
         {(path === '/saved-movies' && props.savedMovies) ?
@@ -80,21 +79,24 @@ function CardList(props) {
         .map
         (movie => (
           <Card 
-          key={movie.movieId}
-          _id={movie._id}
-          movie={movie}
-          img={movie.image}
-          title={movie.nameRU}
-          duration={movie.duration}
-          link={movie.trailerLink}
-          onSave={props.onSave} 
-          onDelete={props.onDelete}
-          savedMovies={props.savedMovies}
+            key={movie.movieId}
+            _id={movie._id}
+            movie={movie}
+            img={movie.image}
+            title={movie.nameRU}
+            duration={movie.duration}
+            link={movie.trailerLink}
+            onSave={props.onSave} 
+            onDelete={props.onDelete}
+            savedMovies={props.savedMovies}
           />
         )): null
         }
       </div>
-      {props.movies?.length > cardCount && <button className={`cards__load-button`} type='button' onClick={handleMoreData}>Ещё</button>}
+      {props.movies?.length > cardCount && 
+      <button className={`cards__load-button`} type='button' onClick={handleMoreData}>
+        Ещё
+      </button>}
     </section>
   )
 }

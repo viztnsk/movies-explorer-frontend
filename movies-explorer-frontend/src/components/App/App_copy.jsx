@@ -33,7 +33,6 @@ function App() {
   const [error, setError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [moviesError, setMoviesError] = useState(false)
-  const [edit, setEdit] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [notFound, setNotFound] = useState(false)
   const [checked, setChecked] = useState(false)

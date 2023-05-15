@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { mainApi } from '../../utils/MainApi';
 import CardList from '../CardList/CardList';
 import Footer from '../Footer/Footer';
@@ -10,7 +10,18 @@ function SavedMovies(props) {
   const [notFound, setNotFound] = useState(false)
   const [checked, setChecked] = useState(false)
 
-  
+  useEffect(() => {
+		if (props.loggedIn) {
+			mainApi
+				.getMovies()
+				.then((savedMovies) => {
+					setSavedMovies(savedMovies)
+				})
+				.catch((err) => {
+					console.log(`Ошибка при загрузке данных с сервера: ${err}`)
+				})
+		}
+	}, [props.loggedIn])
 
   function onSearch(query) {
     if (query === '') {
@@ -28,8 +39,8 @@ function SavedMovies(props) {
         if (deletedMovie) {
           props.setSavedMovies(
           props.savedMovies.filter((m) => m._id !== deletedMovie._id)
-          )}
-          setSavedMovies(savedMovies.filter((m) => m._id !== deletedMovie._id))
+        )}
+        setSavedMovies(savedMovies.filter((m) => m._id !== deletedMovie._id))
       })
       .catch(err => console.log(`Что-то пошло не так: ${err.message}`))
     }
@@ -37,8 +48,12 @@ function SavedMovies(props) {
 
   function handleCheckboxChange() {
     setChecked(!checked)
-    const checkedShortMovies = props.handleCheckboxFilter(props.savedMovies, !checked)
-    console.log(checkedShortMovies)
+    let checkedShortMovies
+    if (!checked === true) {
+      checkedShortMovies = props.handleCheckboxFilter(savedMovies, !checked)
+    } else {
+      checkedShortMovies = props.handleCheckboxFilter(props.savedMovies, !checked)
+    }
       if (checkedShortMovies.length === 0) {
         setNotFound(true)
         setSavedMovies([])
@@ -53,13 +68,12 @@ function SavedMovies(props) {
     <main className='movies'>
     <SearchForm onSearch={onSearch} setChecked={setChecked} checked={checked} handleCheckboxChange={handleCheckboxChange}/>
     {notFound
-    ? <div className='movies__error'>Ничего не найдено</div>
-    :
-    <CardList 
-      saved={true} 
-      searchedSavedMovies={props.searchedSavedMovies}
-      savedMovies={savedMovies}
-      onDelete={onDelete}/>}
+      ? <div className='movies__error'>Ничего не найдено</div>
+      : <CardList 
+          saved={true} 
+          searchedSavedMovies={props.searchedSavedMovies}
+          savedMovies={savedMovies}
+          onDelete={onDelete}/>}
     </main>
     <Footer/>
     </>

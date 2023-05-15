@@ -1,25 +1,42 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { useState } from "react";
-import { useForm, FormProvider } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
-import useControlledInputs from "../../hooks/useForm";
-import {
-  name_validation,
-  email_validation,
-} from '../../utils/formValidation/inputValidations'
-import { FormInput } from "../FormInput/FormInput";
+
 import Header from "../Header/Header";
 
 function Profile({ name, email, ...props }) {
   const currentUser = useContext(CurrentUserContext)
-  const [edit, setEdit] = useState(false)
-  const [isInputDisabled, setInputDisabled] = useState(true);
-
-  const { values, handleChange } = useControlledInputs({
-    name: currentUser.name || '',
-    email: currentUser.email || ''
+  const [values, setValues] = useState({
+    name: currentUser.name,
+    email: currentUser.email
   })
+    const [errors, setErrors] = useState({
+      name: '',
+      email: ''
+    })
+  const [isValid, setIsValid] = useState(false)
+  const [edit, setEdit] = useState(false)
+  const [isInputDisabled, setInputDisabled] = useState(true)
+
+  const handleChange = (e) => {
+    const { name, value, validationMessage } = e.target
+    const newValue = {
+      ...values, [name]: value
+    }
+    setValues(newValue)
+    if ((newValue.name === currentUser.name) && (newValue.email === currentUser.email)) {
+      setIsValid(false)
+    } else {
+      setIsValid(e.target.closest("form").checkValidity())
+    }
+    setErrors((state) => (
+      {...state, [name]: validationMessage }
+      ))
+   
+  };
+
+
   const navigate = useNavigate();
   const onEdit = () => {
     setEdit(!edit)
@@ -27,23 +44,25 @@ function Profile({ name, email, ...props }) {
   }
   const errorMessage = 'При обновлении профиля произошла ошибка.'
 
-  const methods = useForm(
-    { mode: 'onBlur' }
-    )
-
-  const formValues = methods.getValues()
-
-  const updatedFormValues = {
-    name: formValues.name === undefined ? values.name : formValues.name ,
-    email: formValues.email === undefined ? values.email : formValues.email
-  }
-
-  const onSubmit = () => {
-    const {name, email} = updatedFormValues;
+  const onSubmit = (e) => {
+    e.preventDefault()
+    const {name, email} = values;
     if (!name || !email) return;
-    props.updateUser(updatedFormValues)
-    onEdit()    
-}
+    props.updateUser(values)
+    // .then(() => {
+    //   setIsValid(false)
+    onEdit()
+    // })
+    // if (props.success) {
+    //   onEdit()
+    // } else {
+    //   props.setError(true)
+    // }
+  }
+  useEffect(() => {
+    setValues({name: currentUser.name, email: currentUser.email})
+    setIsValid(false)
+  }, [currentUser.name, currentUser.email])
 
   function signOut() {
     localStorage.clear()
@@ -58,42 +77,47 @@ function Profile({ name, email, ...props }) {
     <Header loggedIn={props.loggedIn}/>
     <section className="profile">
      <h1 className="profile__heading">Привет, {currentUser.name}!</h1>
-     <FormProvider {...methods}>
-     <form className="profile__form" onSubmit={methods.handleSubmit(onSubmit)}>
-      <FormInput 
+     <form className="profile__form" onSubmit={onSubmit}>
+     <label className={"profile__label"} htmlFor={'name'}>
+      Имя
+      <input 
         onChange={handleChange} 
-        {...name_validation} 
-        label={'Имя'}
-        labelClassName={"profile__label"} 
-        inputClassName={"profile__input"}
-        // errorClassName={"profile__input-error"} 
+        name={'name'}
+        type={'text'}
+        id={'name'}
+        placeholder={'Ваше имя'}
+        className={"profile__input"}
         disabled={isInputDisabled}
-        defaultValue={values.name}
+        value={values.name}
         />
-      <FormInput 
+      </label>
+       <label className={"profile__label"} htmlFor={'email'}>
+      E-mail
+      <input 
         onChange={handleChange} 
-        {...email_validation}
-        labelClassName={"profile__label"} 
-        inputClassName={"profile__input"} 
-        // errorClassName={"profile__input-error"} 
+        name={'email'}
+        type={'text'}
+        id={'email'}
+        placeholder={'pochta@yandex.ru'}
+        className={"profile__input"}
         disabled={isInputDisabled}
-        defaultValue={values.email}
+        value={values.email}
         />
+      </label>
       <button className={`profile__edit-button ${edit ? 'profile_hidden' : ''}`} type='button' onClick={onEdit}>Редактировать</button>
      </form>
-     </FormProvider>
      <button type='button' to="/" onClick={signOut} className={`profile__exit ${edit ? 'profile_hidden' : ''}`}>Выйти из аккаунта</button>
      <div className={`profile__edit ${edit ? 'profile_shown' : ''}`}>
-      {props.error && <span className='profile__error'
-      >{errorMessage}
+      {props.error && 
+      <span className='profile__error'
+        >{errorMessage}
       </span>}
-      <button type='submit' className={`profile__save-button`} onClick={methods.handleSubmit(onSubmit)} disabled={!methods.formState.isValid}
+      <button type='submit' className={`profile__save-button`} onClick={onSubmit} disabled={!isValid}
       >{props.success ? 'Данные обновлены' : 'Сохранить'}</button>
       </div>
     </section>
     </>
   )
 }
-// disabled={!((updatedFormValues.name !== currentUser.name) || (updatedFormValues.email !== currentUser.email))}
 
 export default Profile;

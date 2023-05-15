@@ -37,9 +37,12 @@ function SearchForm(props) {
         />
         <button className="search__button" type='submit' 
         ></button>
-        <FilterCheckbox handleCheckboxChange={props.handleCheckboxChange}
-        onSearch={props.onSearch} 
-        query={query} setChecked={props.setChecked} checked={props.checked}/> 
+        <FilterCheckbox 
+          handleCheckboxChange={props.handleCheckboxChange}
+          onSearch={props.onSearch} 
+          query={query} 
+          setChecked={props.setChecked} 
+          checked={props.checked}/> 
       </form>
        {/* <span className='profile__error'
       >Нужно ввести ключевое слово

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 import { BASE_MOVIES_API_URL } from "../../utils/constants";
@@ -26,7 +26,15 @@ function Card(props) {
   // const isSaved = props.savedMovies.some(
 	// 	(savedMovie) => savedMovie._id === props._id
 	// );
-  // const [saved, setSaved] = useState(!(props._id === null))
+  const checkIsSaved = () => {
+    return props.savedMovies.some((savedMovie) => savedMovie._id === props._id)
+  }
+
+  useEffect(() => {
+    if (path === '/movies') {
+      setSaved(checkIsSaved())
+    }
+  }, [])
 
 
 
@@ -68,8 +76,7 @@ function Card(props) {
           <p className="card__duration">{convertDuration(props.duration)}</p>
         </div>
 
-        {
-          path === '/movies'
+        {path === '/movies'
           ? <button className={`card__like ${!saved ? '' : 'card__liked'}`} type='button' disabled={props.disabled} onClick={handleSaveMovie}></button>
           :  <button className={`card__like card__delete ${shown ? 'card__delete_shown' : ''}`} type='button' disabled={props.disabled}  onClick={handleDeleteMovie}></button>
         }

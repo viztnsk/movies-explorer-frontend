@@ -62,18 +62,18 @@ function App() {
     }
   }, [loggedIn])
 
-  useEffect(() => {
-		if (loggedIn && path === '/saved-movies') {
-			mainApi
-				.getMovies()
-				.then((savedMovies) => {
-					setSavedMovies(savedMovies)
-				})
-				.catch((err) => {
-					console.log(`Ошибка при загрузке данных с сервера: ${err}`)
-				})
-		}
-	}, [loggedIn])
+  // useEffect(() => {
+	// 	if (loggedIn && path === '/saved-movies') {
+	// 		mainApi
+	// 			.getMovies()
+	// 			.then((savedMovies) => {
+	// 				setSavedMovies(savedMovies)
+	// 			})
+	// 			.catch((err) => {
+	// 				console.log(`Ошибка при загрузке данных с сервера: ${err}`)
+	// 			})
+	// 	}
+	// }, [loggedIn])
 
   // useEffect(() => {
   //   modifyAllMovies(allMovies, savedMovies)
@@ -142,13 +142,15 @@ function App() {
     })
   }
   function updateUser(user) {
-    mainApi.patchUser(user)
+    //return – тогда можем использовать then/catch после передачи этой функции как пропса
+    return mainApi.patchUser(user)
     .then((user) => {
       setCurrentUser({name: user.name, email: user.email})
       setStatus(true)
       handleInfoPopup()
       setError(false)
       setErrorMessage('')
+      setSuccess(true)
     })
     .catch((err) => {
       console.log(`Произошла ошибка при обновлении данных пользователя: ${err.message}`)
@@ -163,7 +165,8 @@ function App() {
         setSuccess(false)
         setError(false)
         setErrorMessage('')
-      }, 5000) 
+      }, 8000)
+      setEdit(false)
     })
   }
   function onSave(movie) {
@@ -172,6 +175,7 @@ function App() {
      .then((savedMovie) => {
       if (savedMovie) {
         setDisabled(false)
+
         setSavedMovies([savedMovie, ...savedMovies])
       }
       console.log(savedMovie)
@@ -189,14 +193,14 @@ function App() {
       mainApi.deleteMovie(deletedMovie._id)
       .then((deletedMovie) => {
         if (deletedMovie) {
-          console.log(savedMovies)
-          console.log(deletedMovie)
+          // console.log(savedMovies)
+          // console.log(deletedMovie)
           setSavedMovies(
             savedMovies.filter((m) => m._id !== deletedMovie._id)
           )}
       })
       .then(() => {
-        setSaved(!saved)
+        setSaved(!saved) //разобраться, что надо изменить для смены статуса лайка
       })
       .catch(err => console.log(`Что-то пошло не так: ${err.message}`))
     }
@@ -215,9 +219,6 @@ function App() {
     return !checkboxState
     ? items
     : items.filter((item) => item.duration <= 40)
-  }
-  function handleUpdateStoragedMovies () {
-
   }
  
   // useEffect(() => {
@@ -282,11 +283,6 @@ function App() {
       setIsLoading(false)
       setMoviesError(false)
   }
-  function handleSavedCheckboxChange() {
-    setChecked(!checked)
-  }
-
-
 
   function onSavedMoviesSearch(query) {
     const searchedSavedMovies = handleSearchFilter(savedMovies, query.movieInput)
@@ -333,8 +329,7 @@ function App() {
 
         <Route exact path='/saved-movies' element={ 
           <ProtectedRoute 
-          loggedIn={loggedIn} 
-          isLoading={isLoading}
+          loggedIn={loggedIn}
           onSearch={onSavedMoviesSearch}
           searchedSavedMovies={searchedSavedMovies}
           setSearchedSavedMovies={setSearchedSavedMovies}
@@ -345,7 +340,6 @@ function App() {
           savedMovies={savedMovies}
           setSavedMovies={setSavedMovies}
           setChecked={setChecked}
-          handleCheckboxChange={handleSavedCheckboxChange}
           moviesError={moviesError}
           saved={saved}
           onSave={onSave}
@@ -353,7 +347,6 @@ function App() {
           setNotFound={setNotFound}
           />
         }/>
-
         <Route exact path='/profile' element={ 
           <ProtectedRoute 
           loggedIn={loggedIn}
@@ -365,8 +358,7 @@ function App() {
           success={success}
           error={error}
           setError={setError}
-          setChecked={setChecked}
-          setStoragedMovies={setStoragedMovies}
+          edit={edit}
           />
       }/>
       <Route exact path='/signin' element={
