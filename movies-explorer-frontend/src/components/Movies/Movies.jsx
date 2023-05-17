@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import CardList from '../CardList/CardList';
 import Footer from '../Footer/Footer';
 import Header from '../Header/Header';
@@ -5,7 +6,22 @@ import Preloader from '../Preloader/Preloader';
 import SearchForm from '../SearchForm/SearchForm';
 
 function Movies(props) {
-  const searchedMovies = JSON.parse(localStorage.getItem('foundMovies'))
+  const movies = JSON.parse(localStorage.getItem('foundMovies'))
+  const shortMovies = JSON.parse(localStorage.getItem('foundShortMovies'))
+
+  // const [movies, setMovies] = useState(JSON.parse(localStorage.getItem('foundMovies')))
+  // const [shortMovies, setShortMovies] = useState(JSON.parse(localStorage.getItem('foundShortMovies')))
+
+  useEffect(() => {
+    const movieQuery = localStorage.getItem('movieQuery')
+    const checkboxState = JSON.parse(localStorage.getItem('checkboxState'))
+    if (movies && (movieQuery)) {
+      const movies = JSON.parse(localStorage.getItem('foundMovies'))
+    } else if (shortMovies && movieQuery && checkboxState) {
+      const shortMovies = JSON.parse(localStorage.getItem('foundShortMovies'))
+    }
+  }, [])
+
   return (
     <>
     <Header loggedIn={props.loggedIn}/>
@@ -21,7 +37,8 @@ function Movies(props) {
       ? <div className='movies__error'>Ничего не найдено</div>
       : <CardList 
           isLoading={props.isLoading} 
-          movies={searchedMovies} 
+          movies={!props.checked ? movies : shortMovies} 
+          //movies={props.movies}
           saved={props.saved}
           setSaved={props.setSaved}
           savedMovies={props.savedMovies} 

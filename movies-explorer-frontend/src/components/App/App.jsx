@@ -25,11 +25,20 @@ function App() {
   })
   const [loggedIn, setLoggedIn] = useState(false)
   const [status, setStatus] = useState(false)
+
+
   const [allMovies, setAllMovies] = useState([])
-  const [savedMovies, setSavedMovies] = useState([])
-  const [storagedMovies, setStoragedMovies] = useState(JSON.parse(localStorage.getItem('foundMovies')) || null)
+  //все начальные фильмы
+  const [savedMovies, setSavedMovies] = useState([]) // все сохраненные фильмы
+  const [initialSavedMovies, setInitialSavedMovies] = useState([]) // все сперва сохраненные фильмы
+  const [searchedMovies, setSearchedMovies] = useState([]) // найденные фильмы
+  const [searchedShortMovies, setSearchedShortMovies] = useState([]) // найденные короткометражки
+  const [storagedMovies, setStoragedMovies] = useState(JSON.parse(localStorage.getItem('foundMovies')) || []) // найденные фильмы из локального хранилища
+  const [storagedShortMovies, setStoragedShortMovies] = useState(JSON.parse(localStorage.getItem('foundShortMovies')) || []) //найденные короткометражки из локального хранилища
+  
+
+
   const [saved, setSaved] = useState(false)
-  const [searchedSavedMovies, setSearchedSavedMovies] = useState([])
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState(false)
   const [moviesError, setMoviesError] = useState(false)
@@ -37,7 +46,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [notFound, setNotFound] = useState(false)
   const [checked, setChecked] = useState(
-    localStorage.getItem('checkboxState') || false)
+    JSON.parse(localStorage.getItem('checkboxState')) || false)
   const [savedChecked, setSavedChecked] = useState(false)
   const [isInfoPopupOpened, setInfoPopupOpen] = useState(false)
   const [disabled, setDisabled] = useState(false)  
@@ -55,24 +64,48 @@ function App() {
       .then(([user, savedMovies]) => {
         setCurrentUser({name: user.name, email: user.email, _id: user._id})
         setSavedMovies(savedMovies)
+        setInitialSavedMovies(savedMovies)
       })
       .catch(err => console.log(`Ошибка при загрузке данных с сервера: ${err}`))
     }
   }, [loggedIn])
 
+  // useEffect(() => {
+	// 	if (loggedIn) {
+	// 		mainApi
+	// 			.getMovies()
+	// 			.then((savedMovies) => {
+	// 				setSavedMovies(savedMovies)
+	// 			})
+	// 			.catch((err) => {
+	// 				console.log(`Ошибка при загрузке данных с сервера: ${err}`)
+	// 			})
+	// 	}
+	// }, [loggedIn])
+
+  useEffect(() => {
+    const movieQuery = localStorage.getItem('movieQuery')
+    if (storagedMovies && (movieQuery)) {
+      setSearchedMovies(storagedMovies)
+    } else if (storagedShortMovies && movieQuery && checked ) {
+      //setSearchedMovies(storagedShortMovies)
+      setSearchedShortMovies(storagedShortMovies)
+    }
+  }, []//[path]
+  )
+
   function handleInfoPopup() {setInfoPopupOpen(!isInfoPopupOpened)}
 
   const modifyAllMovies = (movies, savedMovies) => {
     const updatedMovies = (movies.map((movie) => {
-      savedMovies.forEach((savedMovie) => {
-        if (savedMovie.movieId === movie.id) {
-          movie._id = savedMovie._id
-          movie.isSaved = true
-        } else {
-          movie._id = ''
-          movie.isSaved = false
-        }
-      })
+      const savedMovie = savedMovies.find((savedMovie) => movie.id === savedMovie.movieId)
+      if (savedMovie) {
+        movie._id = savedMovie._id
+        movie.isSaved = true
+      } else {
+        movie._id = ''
+        movie.isSaved = false
+      }
       return movie
     }))
     setAllMovies(updatedMovies)
@@ -158,8 +191,9 @@ function App() {
     mainApi.saveMovie(movie)
       .then((savedMovie) => {
         if (savedMovie) {
-          setSavedMovies([...savedMovies, savedMovie])
           savedMovie.isSaved = true
+          setSavedMovies([...savedMovies, savedMovie])
+
           const localMovie = storagedMovies.find((m) => m.id === savedMovie.movieId)
           if (localMovie) {
             localMovie._id = savedMovie._id
@@ -167,9 +201,11 @@ function App() {
           }
           setDisabled(false)
       }
-      localStorage.setItem('foundMovies', JSON.stringify(storagedMovies))
-      return storagedMovies
     })
+      .then(() => {
+        localStorage.setItem('foundMovies', JSON.stringify(storagedMovies))
+      return storagedMovies
+      })
     .catch((err) => console.log(`Что-то пошло не так: ${err.message}`))
   }
 
@@ -201,18 +237,14 @@ function App() {
     : items.filter((item) => item.duration <= SHORT_MOVIE_LENGTH)
   }
 
-  function onMoviesSearch(query) {
-    setMoviesError(false)
-    setIsLoading(true)
-    localStorage.setItem('movieQuery', query.movieInput)
-    localStorage.setItem('checkboxState', checked)
+  function fetchAllMovies() {
     moviesApi.getMovies()
     .then((movies) => {
-      const modifiedMovies = modifyAllMovies(movies, savedMovies)
+      setAllMovies(movies)
+      const modifiedMovies = modifyAllMovies(movies, initialSavedMovies)
       const movieQuery = localStorage.getItem('movieQuery')
       const foundMovies = handleSearchFilter(modifiedMovies, movieQuery)
-      const checkboxState = JSON.parse(localStorage.getItem('checkboxState'))
-      const checkedShortMovies = handleCheckboxFilter(foundMovies, checkboxState)
+      const checkedShortMovies = handleCheckboxFilter(foundMovies, checked)
       if (checkedShortMovies.length === 0 || foundMovies.length === 0) {
         setNotFound(true)
       } else {
@@ -232,19 +264,48 @@ function App() {
         console.log(err.message)
       })
   }
+  function onMoviesSearch(query) {
+    setMoviesError(false)
+    setIsLoading(true)
+    localStorage.setItem('movieQuery', query.movieInput)
+    localStorage.setItem('checkboxState', checked)
+    if (allMovies.length === 0) {
+      fetchAllMovies()
+    } else {
+      const modifiedMovies = modifyAllMovies(allMovies, savedMovies)
+      const movieQuery = localStorage.getItem('movieQuery')
+      const foundMovies = handleSearchFilter(modifiedMovies, movieQuery)
+      console.log(foundMovies)
+      const checkboxState = JSON.parse(localStorage.getItem('checkboxState'))
+      const checkedShortMovies = handleCheckboxFilter(foundMovies, checkboxState)
+      console.log(checkedShortMovies)
+      if (checkedShortMovies.length === 0 || foundMovies.length === 0) {
+        setNotFound(true)
+      } else {
+        setNotFound(false)
+        setMoviesError(false)
+        localStorage.setItem('foundMovies', JSON.stringify(foundMovies))
+        localStorage.setItem('foundShortMovies', JSON.stringify(checkedShortMovies))
+        setStoragedMovies(foundMovies)
+        setStoragedShortMovies(checkedShortMovies)
+      }
+      setTimeout(() => {setIsLoading(false)
+      setMoviesError(false)}, 1000)
+    }
+  }
 
   function handleCheckboxChange() {
     setChecked(!checked)
     localStorage.setItem('checkboxState', !checked)
     const checkedShortMovies = handleCheckboxFilter(storagedMovies, !checked)
-    localStorage.setItem('foundMovies', JSON.stringify(checkedShortMovies))
       if ((checkedShortMovies.length === 0) || 
-        (!localStorage.getItem('foundMovies'))) {
+        (!localStorage.getItem('foundShortMovies'))) {
         setNotFound(true)
       } else {
         setNotFound(false)
         setMoviesError(false)
-        localStorage.setItem('foundMovies', JSON.stringify(checkedShortMovies))
+        localStorage.setItem('foundShortMovies', JSON.stringify(checkedShortMovies))
+        setStoragedShortMovies(checkedShortMovies)
       }
       setIsLoading(false)
       setMoviesError(false)
@@ -258,7 +319,7 @@ function App() {
     } else {
       setNotFound(false)
       setMoviesError(false)
-      setSearchedSavedMovies(checkedShortSavedMovies)
+      setSearchedShortMovies(checkedShortSavedMovies)
     }
     return searchedSavedMovies
   }
@@ -295,8 +356,8 @@ function App() {
           <ProtectedRoute 
           loggedIn={loggedIn}
           onSearch={onSavedMoviesSearch}
-          searchedSavedMovies={searchedSavedMovies}
-          setSearchedSavedMovies={setSearchedSavedMovies}
+          searchedShortMovies={searchedShortMovies}
+          setSearchedShortMovies={setSearchedShortMovies}
           notFound={notFound}
           component={SavedMovies}
           checked={savedChecked}

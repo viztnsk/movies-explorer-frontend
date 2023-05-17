@@ -11,7 +11,6 @@ function SavedMovies(props) {
   const [checked, setChecked] = useState(false)
 
   useEffect(() => {
-		if (props.loggedIn) {
 			mainApi
 				.getMovies()
 				.then((savedMovies) => {
@@ -20,8 +19,7 @@ function SavedMovies(props) {
 				.catch((err) => {
 					console.log(`Ошибка при загрузке данных с сервера: ${err}`)
 				})
-		}
-	}, [props.loggedIn])
+	}, [])
 
   function onSearch(query) {
     if (query === '') {
