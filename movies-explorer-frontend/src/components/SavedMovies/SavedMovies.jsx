@@ -59,9 +59,7 @@ function SavedMovies(props) {
       checkedShortMovies = props.handleCheckboxFilter(foundSavedMovies, !checked)
     } 
     else {
-      checkedShortMovies = props.handleCheckboxFilter(//props.savedMovies, 
-      savedMovies,
-        !checked)
+      checkedShortMovies = props.handleCheckboxFilter(savedMovies, !checked)
     }
       if (checkedShortMovies.length === 0) {
         setNotFound(true)
@@ -76,6 +74,7 @@ function SavedMovies(props) {
     <Header loggedIn={props.loggedIn}/>
     <main className='movies'>
     <SearchForm 
+      disabled={props.disabled}
       onSearch={onSearch} 
       setChecked={setChecked} 
       checked={checked} 

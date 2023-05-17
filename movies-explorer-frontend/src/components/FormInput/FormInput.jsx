@@ -13,7 +13,7 @@ export const FormInputError = ({
 }
 
 export const FormInput = ({ 
-  name, label, type, id, placeholder, validation, onChange, inputClassName, labelClassName, errorClassName, disabled, defaultValue
+  name, label, type, id, placeholder, validation, onChange, inputClassName, labelClassName, errorClassName, disabled, defaultValue, 
 }) => {
   const methods = useFormContext()
   const inputError = findInputError(methods.formState.errors, name)

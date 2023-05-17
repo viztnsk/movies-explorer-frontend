@@ -87,10 +87,9 @@ function App() {
     if (storagedMovies && (movieQuery)) {
       setSearchedMovies(storagedMovies)
     } else if (storagedShortMovies && movieQuery && checked ) {
-      //setSearchedMovies(storagedShortMovies)
       setSearchedShortMovies(storagedShortMovies)
     }
-  }, []//[path]
+  }, []
   )
 
   function handleInfoPopup() {setInfoPopupOpen(!isInfoPopupOpened)}
@@ -141,6 +140,7 @@ function App() {
   }
 
   function handleSignIn(values) {
+    setDisabled(true)
     return auth.authorize(values.email, values.password)
     .then((res) => {
       mainApi.setToken(res.token)
@@ -149,6 +149,7 @@ function App() {
       checkToken()
       })
     .then(() => {
+      setDisabled(false)
       setStatus(true)
       handleInfoPopup()
     })
@@ -160,6 +161,7 @@ function App() {
   }
 
   function updateUser(user) {
+    setDisabled(true)
     return mainApi.patchUser(user)
     .then((user) => {
       setCurrentUser({name: user.name, email: user.email})
@@ -179,6 +181,7 @@ function App() {
       setTimeout(() => {
         setSuccess(false)
         setError(false)
+        setDisabled(false)
       }, 8000)
       setEdit(false)
     })
@@ -207,6 +210,7 @@ function App() {
   }
 
   function onDelete(movie) {
+    setDisabled(true)
     const deletedMovie = savedMovies.find((item) => item._id === movie._id)
     if (deletedMovie) {
       mainApi.deleteMovie(deletedMovie._id)
@@ -217,6 +221,7 @@ function App() {
           )}
           deletedMovie._id = ''
           deletedMovie.isSaved = false
+          setDisabled(false)
       })
       .catch(err => console.log(`Что-то пошло не так: ${err.message}`))
     }
@@ -253,6 +258,7 @@ function App() {
       }
       setIsLoading(false)
       setMoviesError(false)
+      setDisabled(false)
       })
       .catch((err) => {
         localStorage.removeItem('foundMovies')
@@ -262,6 +268,7 @@ function App() {
       })
   }
   function onMoviesSearch(query) {
+    setDisabled(true)
     setMoviesError(false)
     setIsLoading(true)
     localStorage.setItem('movieQuery', query.movieInput)
@@ -284,8 +291,11 @@ function App() {
         setStoragedMovies(foundMovies)
         setStoragedShortMovies(checkedShortMovies)
       }
-      setTimeout(() => {setIsLoading(false)
-      setMoviesError(false)}, 1000)
+      setTimeout(() => {
+        setIsLoading(false)
+        setMoviesError(false)
+        setDisabled(false)
+    }, 1000)
     }
   }
 
@@ -307,6 +317,7 @@ function App() {
   }
 
   function onSavedMoviesSearch(query) {
+    setDisabled(true)
     const searchedSavedMovies = handleSearchFilter(savedMovies, query.movieInput)
     const checkedShortSavedMovies = handleCheckboxFilter(searchedSavedMovies, savedChecked)
     if (checkedShortSavedMovies.length === 0) {
@@ -316,6 +327,7 @@ function App() {
       setMoviesError(false)
       setSearchedShortMovies(checkedShortSavedMovies)
     }
+    setDisabled(false)
     return searchedSavedMovies
   }
 
@@ -366,6 +378,7 @@ function App() {
           onSave={onSave}
           handleCheckboxFilter={handleCheckboxFilter}
           setNotFound={setNotFound}
+          disabled={disabled}
           />
         }/>
         <Route exact path='/profile' element={ 
@@ -385,13 +398,18 @@ function App() {
           />
       }/>
       <Route exact path='/signin' element={
-          <Login onLogin={handleSignIn}  handleInfoPopup={handleInfoPopup} setStatus={setStatus}/>
+          <Login 
+            onLogin={handleSignIn}  
+            handleInfoPopup={handleInfoPopup} 
+            setStatus={setStatus}
+            disabled={disabled}/>
         }/>
         <Route exact path='/signup' element={
           <Register 
           setStatus={setStatus}
           handleInfoPopup={handleInfoPopup}
-          checkToken={checkToken}/>
+          checkToken={checkToken}
+          disabled={disabled}/>
         }/>
       </Routes>
       <InfoPopup status={status} success={'Успешно!✅'} fail={'Что-то пошло не так ❌ Попробуйте ещё раз.'} isOpen={isInfoPopupOpened} onClose={handleInfoPopup}/>

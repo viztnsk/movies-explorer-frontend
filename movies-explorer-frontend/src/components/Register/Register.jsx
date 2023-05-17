@@ -59,23 +59,26 @@ function Register(props) {
       noValidate
       >
         <FormInput 
+          disabled={props.disabled}
           onChange={handleChange}
           {...name_validation}
           labelClassName={"auth__label"}
           inputClassName={"auth__input"}
           errorClassName={"auth__error"}/>
         <FormInput 
+          disabled={props.disabled}
           onChange={handleChange} 
           {...email_validation}
           labelClassName={"auth__label"}
           inputClassName={"auth__input"}
           errorClassName={"auth__error"}/>
         <FormInput 
-        onChange={handleChange} 
-        {...password_validation} 
-        labelClassName={"auth__label"} 
-        inputClassName={"auth__input"} 
-        errorClassName={"auth__error"}/>
+          disabled={props.disabled}
+          onChange={handleChange} 
+          {...password_validation} 
+          labelClassName={"auth__label"} 
+          inputClassName={"auth__input"} 
+          errorClassName={"auth__error"}/>
         <button 
           className="auth__button" 
           type="submit" 

@@ -29,6 +29,7 @@ function SearchForm(props) {
         className='search__form' 
         name='movie'>
         <input 
+          disabled={props.disabled}
           className='search__input' 
           type="text" 
           placeholder={methods.formState.errors?.movieInput ? 'Нужно ввести ключевое слово': 'Фильм'}

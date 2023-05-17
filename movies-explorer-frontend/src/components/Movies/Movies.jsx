@@ -17,6 +17,7 @@ function Movies(props) {
       setChecked={props.setChecked} 
       checked={props.checked} 
       handleCheckboxChange={props.handleCheckboxChange}
+      disabled={props.disabled}
     />
     {props.isLoading && <Preloader />}
     {props.notFound
