@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 import { BASE_MOVIES_API_URL } from "../../utils/constants";
+import { DEVICE_WIDTH } from "../../utils/constants"
 function Card(props) {
   const user = useContext(CurrentUserContext)
   const path = useLocation().pathname;
@@ -19,19 +20,35 @@ function Card(props) {
     nameEN: props.movie.nameEN,
     movieId: props.movie.id,
   })
+  const { DESKTOP } = DEVICE_WIDTH
   const [shown, setShown] = useState(false);
+  const [width, setWidth] = useState(window.innerWidth)
   const showDelete = () => setShown(true);
   const hideDelete = () => setShown(false);
   const [saved, setSaved] = useState(props.isSaved)
   const checkIsSaved = () => {
     return props.savedMovies.some((savedMovie) => savedMovie._id === props._id)
   }
+  const handleDeleteButton = () => {
+    if (width < DESKTOP) {
+      showDelete()
+    } else {
+      hideDelete()
+    }
+  }
 
   useEffect(() => {
     if (path === '/movies') {
       setSaved(checkIsSaved())
     }
+    if (width < DESKTOP) {
+      setShown(true)
+    }
   }, [])
+
+  useEffect(() => {
+    handleDeleteButton()
+  }, [width, props.savedMovies])
 
   function handleSaveMovie() {
     if (saved) {

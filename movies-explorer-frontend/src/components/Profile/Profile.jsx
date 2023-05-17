@@ -57,7 +57,7 @@ function Profile({ name, email, ...props }) {
     localStorage.clear()
     props.setChecked(false)
     props.setStoragedMovies([])
-    navigate('/signin', {replace: true})
+    navigate('/', {replace: true})
     props.setLoggedIn(false)
   } 
 

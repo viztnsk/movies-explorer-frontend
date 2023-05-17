@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import profile from '../../images/avatar.svg';
 import Cross from '../../images/cross.svg'
 import Bars from '../../images/bars.svg'
@@ -16,15 +16,15 @@ function Navigation() {
           <div className={`navigation__links 
           ${burger ? 'navigation__links_burger' : ''}
           `}>
-            <Link to='/' className={`navigation__link  navigation__link_type_hidden ${burger ? 'navigation__link_type_burger' : ''}`}>
+            <NavLink to='/' className={`navigation__link  navigation__link_type_hidden ${burger ? 'navigation__link_type_burger' : ''}`}>
               Главная 
-            </Link> 
-            <Link to='/movies' className={`navigation__link  ${path === '/movies' ? 'navigation__link_type_active' : ''} ${burger ? 'navigation__link_type_burger' : ''}`}>
+            </NavLink> 
+            <NavLink to='/movies' className={`navigation__link  ${path === '/movies' ? 'navigation__link_type_active' : ''} ${burger ? 'navigation__link_type_burger' : ''}`}>
               Фильмы
-            </Link>
-            <Link to='/saved-movies' className={`navigation__link ${path === '/saved-movies' ? 'navigation__link_type_active' : ''} ${burger ? 'navigation__link_type_burger' : ''}`}>
+            </NavLink>
+            <NavLink to='/saved-movies' className={`navigation__link ${path === '/saved-movies' ? 'navigation__link_type_active' : ''} ${burger ? 'navigation__link_type_burger' : ''}`}>
               Сохраненные фильмы
-            </Link>
+            </NavLink>
           </div>
           <Link to='/profile' className='navigation__profile'><img src={profile} alt='Аккаунт'></img>Аккаунт</Link>
         </div>

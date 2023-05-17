@@ -20,7 +20,20 @@ const ERRORS = {
   }
 }
 
+const MOVIE_COUNT = {
+  DESKTOP: 12,
+  TABLET: 8,
+  MOBILE: 5
+}
+const MORE_MOVIE_COUNT = {
+  DESKTOP: 3,
+  TABLET: 2,
+  MOBILE: 2
+}
+
+const SHORT_MOVIE_LENGTH = 40
+
 const BASE_API_URL = 'https://api.viztnsk.movies.nomoredomains.monster'
 const BASE_MOVIES_API_URL = 'https://api.nomoreparties.co'
 
-export { DEVICE_WIDTH, ERRORS, BASE_API_URL, BASE_MOVIES_API_URL }
+export { DEVICE_WIDTH, ERRORS, MOVIE_COUNT, MORE_MOVIE_COUNT, SHORT_MOVIE_LENGTH, BASE_API_URL, BASE_MOVIES_API_URL }

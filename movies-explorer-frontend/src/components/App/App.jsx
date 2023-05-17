@@ -13,9 +13,10 @@ import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 import Register from '../Register/Register';
 import SavedMovies from '../SavedMovies/SavedMovies';
 import Main from '../Main/Main';
+import { SHORT_MOVIE_LENGTH } from '../../utils/constants';
 
 function App() {
-  const location = useLocation()
+  const path = useLocation().pathname
   const navigate = useNavigate()
   const [currentUser, setCurrentUser] = useState({
     name: '',
@@ -35,7 +36,9 @@ function App() {
   const [edit, setEdit] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [notFound, setNotFound] = useState(false)
-  const [checked, setChecked] = useState(false)
+  const [checked, setChecked] = useState(
+    localStorage.getItem('checkboxState') || false)
+  const [savedChecked, setSavedChecked] = useState(false)
   const [isInfoPopupOpened, setInfoPopupOpen] = useState(false)
   const [disabled, setDisabled] = useState(false)  
 
@@ -53,7 +56,7 @@ function App() {
         setCurrentUser({name: user.name, email: user.email, _id: user._id})
         setSavedMovies(savedMovies)
       })
-      .catch(err => console.log(`Ошибка при загрузке данных с сервера на UseEffect: ${err}`))
+      .catch(err => console.log(`Ошибка при загрузке данных с сервера: ${err}`))
     }
   }, [loggedIn])
 
@@ -87,8 +90,12 @@ function App() {
       auth.getContent(token)
       .then((res) => {
         handleLogin(res)
-        navigate(-1)
-        //navigate('/movies', {replace: true})
+        navigate('/movies', {replace: true})
+        // if (path === '/signin' || path === '/signup') {
+        //   navigate('/movies', {replace: true})
+        // } else {
+        //   navigate(-1)
+        // }
       })
       .catch((err) => {
           setLoggedIn(false)
@@ -187,10 +194,11 @@ function App() {
       return item.nameRU.toLowerCase().includes(query.toLowerCase())
     })
 }
+
   function handleCheckboxFilter(items, checkboxState) {
     return !checkboxState
     ? items
-    : items.filter((item) => item.duration <= 40)
+    : items.filter((item) => item.duration <= SHORT_MOVIE_LENGTH)
   }
 
   function onMoviesSearch(query) {
@@ -205,12 +213,13 @@ function App() {
       const foundMovies = handleSearchFilter(modifiedMovies, movieQuery)
       const checkboxState = JSON.parse(localStorage.getItem('checkboxState'))
       const checkedShortMovies = handleCheckboxFilter(foundMovies, checkboxState)
-      if (checkedShortMovies.length === 0) {
+      if (checkedShortMovies.length === 0 || foundMovies.length === 0) {
         setNotFound(true)
       } else {
         setNotFound(false)
         setMoviesError(false)
         localStorage.setItem('foundMovies', JSON.stringify(checkedShortMovies))
+        localStorage.setItem('foundShortMovies', JSON.stringify(checkedShortMovies))
         setStoragedMovies(foundMovies)
       }
       setIsLoading(false)
@@ -243,7 +252,7 @@ function App() {
 
   function onSavedMoviesSearch(query) {
     const searchedSavedMovies = handleSearchFilter(savedMovies, query.movieInput)
-    const checkedShortSavedMovies = handleCheckboxFilter(searchedSavedMovies, checked)
+    const checkedShortSavedMovies = handleCheckboxFilter(searchedSavedMovies, savedChecked)
     if (checkedShortSavedMovies.length === 0) {
       setNotFound(true)
     } else {
@@ -290,11 +299,11 @@ function App() {
           setSearchedSavedMovies={setSearchedSavedMovies}
           notFound={notFound}
           component={SavedMovies}
-          checked={checked}
+          checked={savedChecked}
           onDelete={onDelete}
           savedMovies={savedMovies}
           setSavedMovies={setSavedMovies}
-          setChecked={setChecked}
+          setChecked={setSavedChecked}
           moviesError={moviesError}
           saved={saved}
           onSave={onSave}

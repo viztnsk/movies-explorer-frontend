@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { useLocation } from "react-router-dom"
-import { DEVICE_WIDTH } from "../../utils/constants"
+import { DEVICE_WIDTH, MORE_MOVIE_COUNT, MOVIE_COUNT } from "../../utils/constants"
 import Card from "../Card/Card"
 
 function CardList(props) {
@@ -12,11 +12,11 @@ function CardList(props) {
   const handleMoreData = () => {
     let nextRow
     if (width >= DESKTOP) {
-      nextRow = 3
+      nextRow = MORE_MOVIE_COUNT.DESKTOP
     } else if (width >= TABLET) {
-      nextRow = 2
+      nextRow = MORE_MOVIE_COUNT.TABLET
     } else if (width > MOBILE) {
-      nextRow = 2
+      nextRow = MORE_MOVIE_COUNT.MOBILE
     }
     setCardCount(cardCount + nextRow)
   }
@@ -35,11 +35,11 @@ function CardList(props) {
       setCardCount(props.savedMovies.length)
     } else {
       if (width > DESKTOP) {
-        setCardCount(12)
+        setCardCount(MOVIE_COUNT.DESKTOP)
       } else if (width > TABLET) {
-        setCardCount(8)
+        setCardCount(MOVIE_COUNT.TABLET)
       } else if (width > MOBILE) {
-        setCardCount(5)
+        setCardCount(MOVIE_COUNT.MOBILE)
       }
     }
   }, [path, width, DESKTOP, TABLET, MOBILE])
