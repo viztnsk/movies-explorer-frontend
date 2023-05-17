@@ -3,6 +3,7 @@ import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { mainApi } from '../../utils/MainApi';
 import { moviesApi } from '../../utils/MoviesApi';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
+import { savedMoviesContext } from '../../contexts/savedMoviesContext';
 import * as auth from '../../utils/Auth'
 import InfoPopup from '../InfoPopup/InfoPopup';
 import Login from '../Login/Login';
@@ -36,8 +37,6 @@ function App() {
   const [storagedMovies, setStoragedMovies] = useState(JSON.parse(localStorage.getItem('foundMovies')) || []) // найденные фильмы из локального хранилища
   const [storagedShortMovies, setStoragedShortMovies] = useState(JSON.parse(localStorage.getItem('foundShortMovies')) || []) //найденные короткометражки из локального хранилища
   
-
-
   const [saved, setSaved] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState(false)
@@ -70,18 +69,18 @@ function App() {
     }
   }, [loggedIn])
 
-  // useEffect(() => {
-	// 	if (loggedIn) {
-	// 		mainApi
-	// 			.getMovies()
-	// 			.then((savedMovies) => {
-	// 				setSavedMovies(savedMovies)
-	// 			})
-	// 			.catch((err) => {
-	// 				console.log(`Ошибка при загрузке данных с сервера: ${err}`)
-	// 			})
-	// 	}
-	// }, [loggedIn])
+  useEffect(() => {
+    if (path === '/movies') {
+      mainApi
+				.getMovies()
+				.then((savedMovies) => {
+					setSavedMovies(savedMovies)
+				})
+				.catch((err) => {
+					console.log(`Ошибка при загрузке данных с сервера: ${err}`)
+				})
+    }
+	}, [])
 
   useEffect(() => {
     const movieQuery = localStorage.getItem('movieQuery')
@@ -123,12 +122,11 @@ function App() {
       auth.getContent(token)
       .then((res) => {
         handleLogin(res)
-        navigate('/movies', {replace: true})
-        // if (path === '/signin' || path === '/signup') {
-        //   navigate('/movies', {replace: true})
-        // } else {
-        //   navigate(-1)
-        // }
+        if (path === '/signin' || path === '/signup' || path === '/') {
+          navigate('/movies', {replace: true})
+        } else if (path === '/movies' || path === '/saved-movies' || path === '/profile') {
+          navigate(-1)
+        }
       })
       .catch((err) => {
           setLoggedIn(false)
@@ -193,7 +191,6 @@ function App() {
         if (savedMovie) {
           savedMovie.isSaved = true
           setSavedMovies([...savedMovies, savedMovie])
-
           const localMovie = storagedMovies.find((m) => m.id === savedMovie.movieId)
           if (localMovie) {
             localMovie._id = savedMovie._id
@@ -275,10 +272,8 @@ function App() {
       const modifiedMovies = modifyAllMovies(allMovies, savedMovies)
       const movieQuery = localStorage.getItem('movieQuery')
       const foundMovies = handleSearchFilter(modifiedMovies, movieQuery)
-      console.log(foundMovies)
       const checkboxState = JSON.parse(localStorage.getItem('checkboxState'))
       const checkedShortMovies = handleCheckboxFilter(foundMovies, checkboxState)
-      console.log(checkedShortMovies)
       if (checkedShortMovies.length === 0 || foundMovies.length === 0) {
         setNotFound(true)
       } else {
@@ -326,6 +321,7 @@ function App() {
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
+      <savedMoviesContext.Provider value={savedMovies}>
       <div className="page">
         <Routes>
         <Route path="*" element={<NotFound></NotFound>}/>
@@ -400,6 +396,7 @@ function App() {
       </Routes>
       <InfoPopup status={status} success={'Успешно!✅'} fail={'Что-то пошло не так ❌ Попробуйте ещё раз.'} isOpen={isInfoPopupOpened} onClose={handleInfoPopup}/>
       </div>
+      </savedMoviesContext.Provider>
     </CurrentUserContext.Provider>
   )
 }

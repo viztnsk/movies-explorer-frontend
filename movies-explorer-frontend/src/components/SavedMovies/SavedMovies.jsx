@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { mainApi } from '../../utils/MainApi';
 import CardList from '../CardList/CardList';
 import Footer from '../Footer/Footer';
 import Header from '../Header/Header';
 import SearchForm from '../SearchForm/SearchForm';
+import { savedMoviesContext } from '../../contexts/savedMoviesContext';
 
 function SavedMovies(props) {
-  const [savedMovies, setSavedMovies] = useState(props.savedMovies)
+  const [savedMovies, setSavedMovies] = useState(useContext(savedMoviesContext))
   const [notFound, setNotFound] = useState(false)
   const [checked, setChecked] = useState(false)
 
@@ -24,9 +25,11 @@ function SavedMovies(props) {
   function onSearch(query) {
     if (query === '') {
       setSavedMovies(props.savedMovies)
+      setChecked(!checked)
     }
     props.onSearch(query)
     setSavedMovies(props.onSearch(query))
+    localStorage.setItem('foundSavedMovies', JSON.stringify(props.onSearch(query)))
   }
 
   function onDelete(movie) {
@@ -46,11 +49,19 @@ function SavedMovies(props) {
 
   function handleCheckboxChange() {
     setChecked(!checked)
+    const foundSavedMovies = JSON.parse(localStorage.getItem('foundSavedMovies'))
+    console.log(foundSavedMovies)
     let checkedShortMovies
-    if (!checked === true) {
+    if (!checked === true && !foundSavedMovies) {
       checkedShortMovies = props.handleCheckboxFilter(savedMovies, !checked)
-    } else {
-      checkedShortMovies = props.handleCheckboxFilter(props.savedMovies, !checked)
+    } 
+    else if (checked === true && foundSavedMovies) {
+      checkedShortMovies = props.handleCheckboxFilter(foundSavedMovies, !checked)
+    } 
+    else {
+      checkedShortMovies = props.handleCheckboxFilter(//props.savedMovies, 
+      savedMovies,
+        !checked)
     }
       if (checkedShortMovies.length === 0) {
         setNotFound(true)
