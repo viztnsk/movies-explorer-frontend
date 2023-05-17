@@ -50,7 +50,6 @@ function SavedMovies(props) {
   function handleCheckboxChange() {
     setChecked(!checked)
     const foundSavedMovies = JSON.parse(localStorage.getItem('foundSavedMovies'))
-    console.log(foundSavedMovies)
     let checkedShortMovies
     if (!checked === true && !foundSavedMovies) {
       checkedShortMovies = props.handleCheckboxFilter(savedMovies, !checked)
@@ -59,7 +58,7 @@ function SavedMovies(props) {
       checkedShortMovies = props.handleCheckboxFilter(foundSavedMovies, !checked)
     } 
     else {
-      checkedShortMovies = props.handleCheckboxFilter(savedMovies, !checked)
+      checkedShortMovies = props.handleCheckboxFilter(props.savedMovies, !checked)
     }
       if (checkedShortMovies.length === 0) {
         setNotFound(true)
