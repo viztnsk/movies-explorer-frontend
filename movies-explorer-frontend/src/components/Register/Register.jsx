@@ -31,6 +31,7 @@ function Register(props) {
   }
 
   const onSubmit = methods.handleSubmit((values) => {
+    props.setDisabled(true)
      const { name, email, password } = values
      auth.register(name, email, password)
     .then((res) => {
@@ -40,11 +41,13 @@ function Register(props) {
       }})
       .then(() => {
         handleSignIn(values)
+        props.setDisabled(false)
     })
     .catch((err) => {
       console.log(err)
       props.setStatus(false)
       props.handleInfoPopup()
+      props.setDisabled(false)
     })
   })
 
@@ -82,7 +85,7 @@ function Register(props) {
         <button 
           className="auth__button" 
           type="submit" 
-          disabled={!methods.formState.isValid}
+          disabled={props.disabled? props.disabled : !methods.formState.isValid}
           onClick={methods.handleSubmit(onSubmit)}>
             Зарегистрироваться
         </button>

@@ -46,10 +46,14 @@ function Card(props) {
     if (path === '/movies') {
       setSaved(checkIsSaved())
     }
-    if (width < DESKTOP) {
-      setShown(true)
-    }
   }, [])
+  
+  useEffect(() => {
+    if (path === '/movies') {
+      setSaved(checkIsSaved())
+    }
+  }, [savedMovies])
+
 
   useEffect(() => {
     handleDeleteButton()

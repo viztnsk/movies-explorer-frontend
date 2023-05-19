@@ -76,7 +76,7 @@ function Profile({ name, email, ...props }) {
         id={'name'}
         placeholder={'Ваше имя'}
         className={"profile__input"}
-        disabled={isInputDisabled}
+        disabled={props.disabled ? props.disabled : isInputDisabled}
         value={values.name}/>
       </label>
       <label className={"profile__label"} htmlFor={'email'}>
@@ -88,7 +88,7 @@ function Profile({ name, email, ...props }) {
         id={'email'}
         placeholder={'pochta@yandex.ru'}
         className={"profile__input"}
-        disabled={isInputDisabled}
+        disabled={props.disabled ? props.disabled : isInputDisabled}
         value={values.email}/>
       </label>
       <button className={`profile__edit-button ${edit ? 'profile_hidden' : ''}`} type='button' onClick={onEdit}>Редактировать</button>
@@ -101,7 +101,7 @@ function Profile({ name, email, ...props }) {
         <span className='profile__error'
           >{errorMessage}
         </span>}
-        <button type='submit' className={`profile__save-button`} onClick={onSubmit} disabled={!isValid}
+        <button type='submit' className={`profile__save-button`} onClick={onSubmit} disabled={props.disabled ? props.disabled : !isValid}
         >{props.success ? 'Данные обновлены' : 'Сохранить'}</button>
       </div>
     </section>

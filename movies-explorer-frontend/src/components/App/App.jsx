@@ -30,7 +30,7 @@ function App() {
 
   const [allMovies, setAllMovies] = useState([])
   //все начальные фильмы
-  const [savedMovies, setSavedMovies] = useState([]) // все сохраненные фильмы
+  const [savedMovies, setSavedMovies] = useState([]) // все сохраненные фильмы – контекст
   const [initialSavedMovies, setInitialSavedMovies] = useState([]) // все сперва сохраненные фильмы
   const [searchedMovies, setSearchedMovies] = useState([]) // найденные фильмы
   const [searchedShortMovies, setSearchedShortMovies] = useState([]) // найденные короткометражки
@@ -69,6 +69,7 @@ function App() {
     }
   }, [loggedIn])
 
+  //добавление всех сохраненных карточек в стейт контекста
   useEffect(() => {
     if (path === '/movies') {
       mainApi
@@ -81,7 +82,8 @@ function App() {
 				})
     }
 	}, [])
-
+  
+  //установление предыдущего поиска и состояния чекбокса при переходе на /movies
   useEffect(() => {
     const movieQuery = localStorage.getItem('movieQuery')
     if (storagedMovies && (movieQuery)) {
@@ -94,6 +96,7 @@ function App() {
 
   function handleInfoPopup() {setInfoPopupOpen(!isInfoPopupOpened)}
 
+  //функция "обработки" всех фильмов – добавления им _id и состояния сохранения в зависимости от их наличия в массиве сохраненных фильмов
   const modifyAllMovies = (movies, savedMovies) => {
     const updatedMovies = (movies.map((movie) => {
       const savedMovie = savedMovies.find((savedMovie) => movie.id === savedMovie.movieId)
@@ -157,6 +160,7 @@ function App() {
       console.log(err)
       setStatus(false)
       handleInfoPopup()
+      setDisabled(false)
     })
   }
 
@@ -187,11 +191,14 @@ function App() {
     })
   }
 
+  //функция сохранения фильма – 
   function onSave(movie) {
+    console.log(movie)
     setDisabled(true)
     mainApi.saveMovie(movie)
       .then((savedMovie) => {
         if (savedMovie) {
+          console.log(savedMovie)
           savedMovie.isSaved = true
           setSavedMovies([...savedMovies, savedMovie])
           const localMovie = storagedMovies.find((m) => m.id === savedMovie.movieId)
@@ -208,7 +215,7 @@ function App() {
       })
     .catch((err) => console.log(`Что-то пошло не так: ${err.message}`))
   }
-
+  //функция удаления фильма
   function onDelete(movie) {
     setDisabled(true)
     const deletedMovie = savedMovies.find((item) => item._id === movie._id)
@@ -220,10 +227,15 @@ function App() {
             savedMovies.filter((m) => m._id !== deletedMovie._id)
           )}
           deletedMovie._id = ''
+          delete movie._id
           deletedMovie.isSaved = false
+          delete movie.isSaved
           setDisabled(false)
       })
-      .catch(err => console.log(`Что-то пошло не так: ${err.message}`))
+      .catch(err => {
+        console.log(`Что-то пошло не так: ${err.message}`)
+        setDisabled(false)
+      })
     }
   }
 
@@ -238,7 +250,7 @@ function App() {
     ? items
     : items.filter((item) => item.duration <= SHORT_MOVIE_LENGTH)
   }
-
+  //функция получения всех фильмов с сервера
   function fetchAllMovies() {
     moviesApi.getMovies()
     .then((movies) => {
@@ -267,15 +279,17 @@ function App() {
         console.log(err.message)
       })
   }
+  //функция поискового запроса
   function onMoviesSearch(query) {
     setDisabled(true)
     setMoviesError(false)
     setIsLoading(true)
     localStorage.setItem('movieQuery', query.movieInput)
     localStorage.setItem('checkboxState', checked)
-    if (allMovies.length === 0) {
+    if (allMovies.length === 0) { //если до этого поиск не выполнялся, отправляем запрос за всеми фильмами
       fetchAllMovies()
     } else {
+      //если поиск выполнялся (фильмы были получены), обновляем состояние карточек в зависимости от сохранения фильмов
       const modifiedMovies = modifyAllMovies(allMovies, savedMovies)
       const movieQuery = localStorage.getItem('movieQuery')
       const foundMovies = handleSearchFilter(modifiedMovies, movieQuery)
@@ -409,6 +423,7 @@ function App() {
           setStatus={setStatus}
           handleInfoPopup={handleInfoPopup}
           checkToken={checkToken}
+          setDisabled={setDisabled}
           disabled={disabled}/>
         }/>
       </Routes>

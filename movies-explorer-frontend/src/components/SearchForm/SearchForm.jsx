@@ -47,11 +47,9 @@ function SearchForm(props) {
           onSearch={props.onSearch} 
           query={query} 
           setChecked={props.setChecked} 
-          checked={props.checked}/> 
+          checked={props.checked}
+          disabled={props.disabled}/> 
       </form>
-       {/* <span className='profile__error'
-      >Нужно ввести ключевое слово
-      </span> */}
     </section>
   )
 }

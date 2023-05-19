@@ -47,7 +47,7 @@ function Login(props) {
         <button 
           className="auth__button" 
           type="submit" 
-          disabled={!methods.formState.isValid}
+          disabled={props.disabled? props.disabled : !methods.formState.isValid}
           onClick={onSubmit}>
             Войти
         </button>
