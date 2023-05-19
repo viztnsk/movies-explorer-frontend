@@ -31,6 +31,8 @@ function Movies(props) {
           onSave={props.onSave} 
           onDelete={props.onDelete}
           disabled={props.disabled}
+          storagedMovies={props.storagedMovies}
+          setStoragedMovies={props.setStoragedMovies}
         />}
       {props.moviesError && 
         <div className='movies__error'>

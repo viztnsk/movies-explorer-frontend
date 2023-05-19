@@ -83,7 +83,6 @@ function App() {
     }
 	}, [])
   
-  //установление предыдущего поиска и состояния чекбокса при переходе на /movies
   useEffect(() => {
     const movieQuery = localStorage.getItem('movieQuery')
     if (storagedMovies && (movieQuery)) {
@@ -96,7 +95,6 @@ function App() {
 
   function handleInfoPopup() {setInfoPopupOpen(!isInfoPopupOpened)}
 
-  //функция "обработки" всех фильмов – добавления им _id и состояния сохранения в зависимости от их наличия в массиве сохраненных фильмов
   const modifyAllMovies = (movies, savedMovies) => {
     const updatedMovies = (movies.map((movie) => {
       const savedMovie = savedMovies.find((savedMovie) => movie.id === savedMovie.movieId)
@@ -194,43 +192,43 @@ function App() {
   //функция сохранения фильма – 
   function onSave(movie) {
     console.log(movie)
+    console.log('click save')
     setDisabled(true)
     mainApi.saveMovie(movie)
       .then((savedMovie) => {
         if (savedMovie) {
-          console.log(savedMovie)
-          savedMovie.isSaved = true
-          setSavedMovies([...savedMovies, savedMovie])
-          const localMovie = storagedMovies.find((m) => m.id === savedMovie.movieId)
-          if (localMovie) {
-            localMovie._id = savedMovie._id
-            localMovie.isSaved = true
-          }
+          setSavedMovies((savedMovies) => [...savedMovies, savedMovie])
           setDisabled(false)
+          console.log(savedMovies)
+          console.log('saved')
       }
     })
-      .then(() => {
-        localStorage.setItem('foundMovies', JSON.stringify(storagedMovies))
-      return storagedMovies
-      })
-    .catch((err) => console.log(`Что-то пошло не так: ${err.message}`))
+    .catch((err) => {
+      console.log(`Что-то пошло не так: ${err.message}`)
+      setDisabled(false)
+    })
   }
   //функция удаления фильма
   function onDelete(movie) {
-    setDisabled(true)
+    console.log('click delete')
+    console.log(movie)
+    console.log(savedMovies)
+    //setDisabled(true)
     const deletedMovie = savedMovies.find((item) => item._id === movie._id)
+    console.log(savedMovies.find((item) => item._id === movie._id))
+    console.log(deletedMovie)
+    console.log(savedMovies)
     if (deletedMovie) {
       mainApi.deleteMovie(deletedMovie._id)
       .then((deletedMovie) => {
+        console.log(deletedMovie)
         if (deletedMovie) {
           setSavedMovies(
-            savedMovies.filter((m) => m._id !== deletedMovie._id)
+            savedMovies.filter((m) => m._id !== movie._id)
           )}
-          deletedMovie._id = ''
           delete movie._id
-          deletedMovie.isSaved = false
-          delete movie.isSaved
           setDisabled(false)
+          console.log('deleted')
       })
       .catch(err => {
         console.log(`Что-то пошло не так: ${err.message}`)
@@ -286,10 +284,9 @@ function App() {
     setIsLoading(true)
     localStorage.setItem('movieQuery', query.movieInput)
     localStorage.setItem('checkboxState', checked)
-    if (allMovies.length === 0) { //если до этого поиск не выполнялся, отправляем запрос за всеми фильмами
+    if (allMovies.length === 0) {
       fetchAllMovies()
     } else {
-      //если поиск выполнялся (фильмы были получены), обновляем состояние карточек в зависимости от сохранения фильмов
       const modifiedMovies = modifyAllMovies(allMovies, savedMovies)
       const movieQuery = localStorage.getItem('movieQuery')
       const foundMovies = handleSearchFilter(modifiedMovies, movieQuery)
@@ -371,6 +368,8 @@ function App() {
         onDelete={onDelete}
         savedMovies={savedMovies}
         disabled={disabled}
+        // storagedMovies={storagedMovies}
+        // setStoragedMovies={setStoragedMovies}
         />
         }/>
 
@@ -383,13 +382,13 @@ function App() {
           notFound={notFound}
           component={SavedMovies}
           checked={savedChecked}
-          onDelete={onDelete}
+          //onDelete={onDelete}
           savedMovies={savedMovies}
           setSavedMovies={setSavedMovies}
           setChecked={setSavedChecked}
           moviesError={moviesError}
           saved={saved}
-          onSave={onSave}
+          //onSave={onSave}
           handleCheckboxFilter={handleCheckboxFilter}
           setNotFound={setNotFound}
           disabled={disabled}

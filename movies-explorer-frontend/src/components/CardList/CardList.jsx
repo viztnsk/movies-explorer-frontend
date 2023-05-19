@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom"
 import { DEVICE_WIDTH, MORE_MOVIE_COUNT, MOVIE_COUNT } from "../../utils/constants"
 import Card from "../Card/Card"
 
+
 function CardList(props) {
   const path = useLocation().pathname;
   const { DESKTOP, TABLET, MOBILE } = DEVICE_WIDTH
@@ -55,7 +56,7 @@ function CardList(props) {
           <Card 
             key={movie.id}
             _id={movie._id}
-            isSaved={movie.isSaved}
+            isSaved={props.savedMovies.find((savedMovie) => movie.id === savedMovie.movieId)}
             movie={movie}
             img={movie.image}
             title={movie.nameRU}
@@ -73,6 +74,8 @@ function CardList(props) {
             saved={props.saved}
             disabled={props.disabled}
             savedMovies={props.savedMovies}
+            storagedMovies={props.storagedMovies}
+            setStoragedMovies={props.setStoragedMovies}
           />
         )) : null}
         {(path === '/saved-movies' && props.savedMovies) ?

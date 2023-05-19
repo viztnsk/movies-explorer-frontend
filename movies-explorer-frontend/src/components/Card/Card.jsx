@@ -28,11 +28,6 @@ function Card(props) {
   const [width, setWidth] = useState(window.innerWidth)
   const showDelete = () => setShown(true);
   const hideDelete = () => setShown(false);
-  const [saved, setSaved] = useState(props.isSaved)
-
-  const checkIsSaved = () => {
-    return savedMovies.some((savedMovie) => savedMovie._id === props._id)
-  }
   
   const handleDeleteButton = () => {
     if (width < DESKTOP) {
@@ -43,31 +38,17 @@ function Card(props) {
   }
 
   useEffect(() => {
-    if (path === '/movies') {
-      setSaved(checkIsSaved())
-    }
-  }, [])
-  
-  useEffect(() => {
-    if (path === '/movies') {
-      setSaved(checkIsSaved())
-    }
-  }, [savedMovies])
-
-
-  useEffect(() => {
     handleDeleteButton()
   }, [width, props.savedMovies])
 
   function handleSaveMovie() {
-    if (saved) {
+    if (props.isSaved) {
       movie._id = props._id
       props.onDelete(movie)
     } else {
       props.onSave(movie, user)
     }
-    setSaved(!saved)
-    }
+  }
 
     function handleDeleteMovie() {
       movie._id = props._id
@@ -96,7 +77,7 @@ function Card(props) {
         </div>
 
         {path === '/movies'
-          ? <button className={`card__like ${!saved ? '' : 'card__liked'}`} type='button' disabled={props.disabled} onClick={handleSaveMovie}></button>
+          ? <button className={`card__like ${!props.isSaved ? '' : 'card__liked'}`} type='button' disabled={props.disabled} onClick={handleSaveMovie}></button>
           :  <button className={`card__like card__delete ${shown ? 'card__delete_shown' : ''}`} type='button' disabled={props.disabled}  onClick={handleDeleteMovie}></button>
         }
       </div>
