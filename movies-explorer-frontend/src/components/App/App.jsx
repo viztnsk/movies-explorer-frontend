@@ -69,7 +69,6 @@ function App() {
     }
   }, [loggedIn])
 
-  //добавление всех сохраненных карточек в стейт контекста
   useEffect(() => {
     if (path === '/movies') {
       mainApi
@@ -100,10 +99,8 @@ function App() {
       const savedMovie = savedMovies.find((savedMovie) => movie.id === savedMovie.movieId)
       if (savedMovie) {
         movie._id = savedMovie._id
-        movie.isSaved = true
       } else {
         movie._id = ''
-        movie.isSaved = false
       }
       return movie
     }))
@@ -189,18 +186,13 @@ function App() {
     })
   }
 
-  //функция сохранения фильма – 
   function onSave(movie) {
-    console.log(movie)
-    console.log('click save')
     setDisabled(true)
     mainApi.saveMovie(movie)
       .then((savedMovie) => {
         if (savedMovie) {
           setSavedMovies((savedMovies) => [...savedMovies, savedMovie])
           setDisabled(false)
-          console.log(savedMovies)
-          console.log('saved')
       }
     })
     .catch((err) => {
@@ -208,16 +200,11 @@ function App() {
       setDisabled(false)
     })
   }
-  //функция удаления фильма
+
   function onDelete(movie) {
-    console.log('click delete')
-    console.log(savedMovies)
-    //setDisabled(true)
+    setDisabled(true)
     const deletedMovie = savedMovies.find((item) => item.movieId === movie.movieId)
-    //console.log(savedMovies.find((item) => item._id === movie._id))
-    console.log(movie)
-    console.log(deletedMovie)
-    // if (deletedMovie) {
+    if (deletedMovie) {
       mainApi.deleteMovie(deletedMovie._id)
       .then((deletedMovie) => {
         console.log(deletedMovie)
@@ -225,7 +212,6 @@ function App() {
           setSavedMovies(
             savedMovies.filter((m) => m._id !== deletedMovie._id)
           )}
-          //////delete movie._id
           setDisabled(false)
           console.log('deleted')
       })
@@ -233,7 +219,7 @@ function App() {
         console.log(`Что-то пошло не так: ${err.message}`)
         setDisabled(false)
       })
-    //}
+    }
   }
 
   const handleSearchFilter = (items, query) => {
@@ -247,7 +233,7 @@ function App() {
     ? items
     : items.filter((item) => item.duration <= SHORT_MOVIE_LENGTH)
   }
-  //функция получения всех фильмов с сервера
+
   function fetchAllMovies() {
     moviesApi.getMovies()
     .then((movies) => {
@@ -276,7 +262,7 @@ function App() {
         console.log(err.message)
       })
   }
-  //функция поискового запроса
+
   function onMoviesSearch(query) {
     setDisabled(true)
     setMoviesError(false)

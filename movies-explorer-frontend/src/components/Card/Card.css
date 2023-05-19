@@ -64,12 +64,16 @@
 .card__delete {
   background-image: url(../../images/cross.svg);
   visibility: hidden; 
-}.card__delete_shown {
-  visibility: visible;
 }
+/* .card__delete_shown {
+  visibility: visible;
+} */
 .card_delete:hover {
   opacity: 0.8;
 }
+.card__container:hover .card__delete {
+  visibility: visible
+ }
 @media screen and (min-width: 768px) and (max-width: 1160px) {
   .card__image {
     height: 190px;
@@ -80,6 +84,9 @@
   .card__title {
     margin: 9px 0;
   }
+  .card__delete {
+    visibility: visible;
+  }
 }
 @media screen and (min-width: 400px) and (max-width: 768px) {
   .card__container {
@@ -87,6 +94,9 @@
   }
   .card__title {
     margin: 9px 0;
+  }
+  .card__delete {
+    visibility: visible;
   }
 }
 @media screen and (min-width: 320px) and (max-width: 399px) {
@@ -109,5 +119,8 @@
   .card__like {
     width: 24px;
     height: 24px;
+  }
+  .card__delete {
+    visibility: visible;
   }
 }
