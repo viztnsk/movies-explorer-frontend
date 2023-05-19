@@ -43,17 +43,21 @@ function Card(props) {
 
   function handleSaveMovie() {
     if (props.isSaved) {
-      movie._id = props._id
+      console.log(movie._id)
+      console.log(props._id)
+      //movie._id = props._id
+      
       props.onDelete(movie)
     } else {
       props.onSave(movie, user)
     }
   }
 
-    function handleDeleteMovie() {
-      movie._id = props._id
-      props.onDelete(movie)
+  function handleDeleteMovie() {
+    movie._id = props._id
+    props.onDelete(movie)
     }
+
   function convertDuration (duration) {
     if (duration > 60) {
       let hours, minutes;

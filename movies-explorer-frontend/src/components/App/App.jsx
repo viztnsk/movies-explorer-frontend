@@ -211,22 +211,21 @@ function App() {
   //функция удаления фильма
   function onDelete(movie) {
     console.log('click delete')
-    console.log(movie)
     console.log(savedMovies)
     //setDisabled(true)
-    const deletedMovie = savedMovies.find((item) => item._id === movie._id)
-    console.log(savedMovies.find((item) => item._id === movie._id))
+    const deletedMovie = savedMovies.find((item) => item.movieId === movie.movieId)
+    //console.log(savedMovies.find((item) => item._id === movie._id))
+    console.log(movie)
     console.log(deletedMovie)
-    console.log(savedMovies)
-    if (deletedMovie) {
+    // if (deletedMovie) {
       mainApi.deleteMovie(deletedMovie._id)
       .then((deletedMovie) => {
         console.log(deletedMovie)
         if (deletedMovie) {
           setSavedMovies(
-            savedMovies.filter((m) => m._id !== movie._id)
+            savedMovies.filter((m) => m._id !== deletedMovie._id)
           )}
-          delete movie._id
+          //////delete movie._id
           setDisabled(false)
           console.log('deleted')
       })
@@ -234,7 +233,7 @@ function App() {
         console.log(`Что-то пошло не так: ${err.message}`)
         setDisabled(false)
       })
-    }
+    //}
   }
 
   const handleSearchFilter = (items, query) => {
